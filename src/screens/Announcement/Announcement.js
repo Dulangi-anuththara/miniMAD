@@ -35,17 +35,17 @@ export default function Announcement({navigation}) {
     return <ActivityIndicator />;
   }
     return (
-        <View>
+        <View style={styles.Container}>
             <FlatList
       data={users}
       renderItem={({ item }) => (
         <View style={styles.list}>
         <View style={styles.header}>
           <Text style={styles.title}>{item.Title}</Text>
-          <Text>by {item.Author}</Text>
+          <Text style={styles.Author}>by {item.Author}</Text>
           </View>
 
-            <Text> {item.Announcement}</Text>
+            <Text style={styles.announcement}> {item.Announcement}</Text>
         </View>
       )}
     />
@@ -73,24 +73,34 @@ uri:'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_ico
 
 const styles = StyleSheet.create({
 
+    Container:{
+        backgroundColor:'#3096EE',
+        flex:1
+    },
+
     list:{
         borderWidth:3,
         borderRadius:6,
-        borderColor:'red',
+        borderColor:'#3096EE',
         height: 100,
         flex: 1,
+        backgroundColor:'white'
         //alignItems: 'center',
         //justifyContent: 'center'
     },
     title:{
-        color:'red',
+        color:'#5E666E',
+        fontWeight: "bold",
         fontSize:18
     },
     header:{
-        backgroundColor:'#F4E4E3'
+        backgroundColor:'#B1D6F5'
     },
     floatingButton:{
         marginTop:400
+    },
+    Author:{
+      color:'#900C3F'
     },
     
   TouchableOpacityStyle: {
@@ -108,4 +118,7 @@ const styles = StyleSheet.create({
     height: 70,
     //backgroundColor:'black'
   },
+  announcement:{
+    marginTop:10
+  }
 })

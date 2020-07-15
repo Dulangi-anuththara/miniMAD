@@ -39,7 +39,7 @@ export default function AssignmentsList({navigation}) {
       data={assignments}
       renderItem={({ item }) => (
         <TouchableWithoutFeedback onPress={() => navigation.navigate('ViewAssignments', {
-          item:item
+          key:item.key
         })}> 
         <View style={styles.list}>
           <Text style={styles.title}>{item.Title}</Text>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     list:{
         borderWidth:3,
         borderRadius:6,
-        borderColor:'red',
+        borderColor:'#3096EE',
         height: 100,
         flex: 1,
         //alignItems: 'center',

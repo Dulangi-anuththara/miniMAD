@@ -5,15 +5,33 @@ import FilePickerManager from 'react-native-file-picker';
 import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
 import firebase from '@react-native-firebase/app'
+import firestore from '@react-native-firebase/firestore';
 
 export default function ViewAssignments({route, navigation}) {
     
-    const {item} = route.params;
+    const {key} = route.params;
+    const[item,setItem] = useState([])
     const [file,setFile] = useState();
-    //const reference = storage().ref('gs://minimad-b3931.appspot.com/Assignments/FirstYear/Computer Systems/Submission');
-    //const reference = firebase.storage().ref(file.fileName);
+    const [progress,setProgress]=useState('');
+    const [buttonStat,setButtonStat] = useState('add');
+    var showButton = <Button></Button>
 
-    useEffect
+
+    useEffect(() => {
+        console.log(key)
+        firestore()
+        .collection('Assignments')
+        .doc(key)
+        .get()
+        .then(documentSnapshot => {
+            console.log('User exists: ', documentSnapshot.exists);
+
+            if (documentSnapshot.exists) {
+            setItem(documentSnapshot.data());
+            console.log('User data: ', documentSnapshot.data());
+            }
+        });
+    },[])
 
     const FileUpload = () => {
         FilePickerManager.showFilePicker(null, (response) => {
@@ -27,6 +45,8 @@ export default function ViewAssignments({route, navigation}) {
         }
         else {
           setFile(response);
+          setButtonStat('upload');
+      
         }
       });
     
@@ -39,35 +59,57 @@ export default function ViewAssignments({route, navigation}) {
         const task = reference.putFile(pathToFile);
 
         task.on('state_changed', taskSnapshot => {
-            //console.log(taskSnapshot)
-        console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+
+            setProgress(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`)
+            console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
         });
 
         task.then(() => {
-        console.log('Image uploaded to the bucket!');
+            setProgress('File Successfully uploaded')
+            setButtonStat('edit')
+            
+            firestore()
+            .collection('Assignments')
+            .doc(key)
+            .update({
+                SubStat:'Assignment submitted',
+            })
+            .then(() => {
+                console.log('User updated!');                
+            });
+            
         })
         task.catch(error =>{
             console.log(error)
         });
     }
 
-
-
-    var showButton = <Button></Button>
-    if(!file){
-        showButton =  <Button
-        title="Add Submission"
-        titleStyle={{paddingBottom:100}}
-        onPress={FileUpload}
-        
-    />
+    const editSubmit = () =>{
+        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
+        reference.delete();
+        setButtonStat('add')
     }
-    else{
-       showButton =  <Button
-        title="Upload"
-        titleStyle={{alignSelf:'center'}}
-        onPress={handleSubmit}
-    />
+
+    switch(buttonStat){
+        case 'add':
+            showButton =  <Button
+            title="Add Submission"
+            onPress={FileUpload}/>
+            break;
+        case 'upload':
+            showButton =  <Button
+            title="Upload"
+            onPress={handleSubmit}/>
+            break;
+        case 'edit':
+            showButton =  <Button
+            title="Edit Submission"
+            onPress={editSubmit}/>
+            break;
+        default:
+            showButton=<Button></Button>
+
+
     }
 
     return (
@@ -84,17 +126,18 @@ export default function ViewAssignments({route, navigation}) {
             </View>
             <Text h4>Submission Status</Text>
             <View style={styles.statusContent}>
-                
-            <Text>Submission Status :</Text>
-            <Text>Grading Status :</Text>
-            <Text>Due Date : {item.DueDate}</Text>
-            <Text>Time Remaining :</Text>
-            <Text>Submission Comments :</Text>
-            
-    
+
+                    <Text>Submission Status : {item.SubStat}</Text>
+                    <Text>Grading Status :  {item.gradeStat}</Text>
+                    <Text>Due Date : {item.DueDate}</Text>
+                    <Text>Time Remaining :</Text>
+                    <Text>Submission Comments :</Text>
+
+
             </View>
 
             <View>
+            <Text style={styles.textStyle}>{progress}</Text>  
             <View style={styles.submitButton}>
                 {showButton}
             </View>
@@ -124,8 +167,8 @@ const styles = StyleSheet.create({
     },
     submitButton:{
         width:200,
-        height:30,
-        justifyContent:'space-between',
+        height:50,
+        alignContent:'center',
         alignSelf:'center',
         flexDirection:'row'
     },
@@ -153,8 +196,10 @@ const styles = StyleSheet.create({
         marginTop: 22
       },
       textStyle: {
-        color: "white",
+        color: "black",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign:'left',
+        marginLeft:10,
+        marginBottom:20
       },
 })
