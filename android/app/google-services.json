@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "106441122157",
+    "firebase_url": "https://minimad-b3931.firebaseio.com",
+    "project_id": "minimad-b3931",
+    "storage_bucket": "minimad-b3931.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106441122157:android:51479c8826fdceae847a64",
+        "android_client_info": {
+          "package_name": "com.miniMAD"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106441122157-pa2eqfvsprnn5u10gbt6eda71r9f2g1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtOcfV915s2AfmEDolCQLiq3AfcculkU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106441122157-pa2eqfvsprnn5u10gbt6eda71r9f2g1i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106441122157:android:fae673cb297b849c847a64",
+        "android_client_info": {
+          "package_name": "com.minimad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106441122157-pa2eqfvsprnn5u10gbt6eda71r9f2g1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtOcfV915s2AfmEDolCQLiq3AfcculkU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106441122157-pa2eqfvsprnn5u10gbt6eda71r9f2g1i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
