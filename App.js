@@ -24,7 +24,7 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import firebase from '@react-native-firebase/app'
+
 import auth from '@react-native-firebase/auth';
 import { Login, Register, Home, SignOut, Assignments} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';

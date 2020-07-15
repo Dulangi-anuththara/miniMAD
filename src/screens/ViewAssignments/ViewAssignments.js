@@ -1,12 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Linking, StyleSheet, Modal, TouchableHighlight } from 'react-native'
 import { Text, Button } from 'react-native-elements';
-import DocumentPicker from 'react-native-document-picker';
+import FilePickerManager from 'react-native-file-picker';
+import { utils } from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
+import firebase from '@react-native-firebase/app'
 
 export default function ViewAssignments({route, navigation}) {
     
-    const [modalVisible, setModalVisible] = useState(false);
     const {item} = route.params;
+    const [file,setFile] = useState();
+    //const reference = storage().ref('gs://minimad-b3931.appspot.com/Assignments/FirstYear/Computer Systems/Submission');
+    //const reference = firebase.storage().ref(file.fileName);
+
+    useEffect
+
+    const FileUpload = () => {
+        FilePickerManager.showFilePicker(null, (response) => {
+        console.log('Response = ', response);
+       
+        if (response.didCancel) {
+          console.log('User cancelled file picker');
+        }
+        else if (response.error) {
+          console.log('FilePickerManager Error: ', response.error);
+        }
+        else {
+          setFile(response);
+        }
+      });
+    
+    }
+    const handleSubmit = () =>{
+        console.log(utils.FilePath.PICTURES_DIRECTORY)
+        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
+
+        const pathToFile = file.path;
+        const task = reference.putFile(pathToFile);
+
+        task.on('state_changed', taskSnapshot => {
+            //console.log(taskSnapshot)
+        console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+        });
+
+        task.then(() => {
+        console.log('Image uploaded to the bucket!');
+        })
+        task.catch(error =>{
+            console.log(error)
+        });
+    }
+
+
+
+    var showButton = <Button></Button>
+    if(!file){
+        showButton =  <Button
+        title="Add Submission"
+        titleStyle={{paddingBottom:100}}
+        onPress={FileUpload}
+        
+    />
+    }
+    else{
+       showButton =  <Button
+        title="Upload"
+        titleStyle={{alignSelf:'center'}}
+        onPress={handleSubmit}
+    />
+    }
+
     return (
         <View style={styles.Container}>
             <View >
@@ -32,49 +95,8 @@ export default function ViewAssignments({route, navigation}) {
             </View>
 
             <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        }}
-                    >
-                        <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
-
-                            <DocumentPicker></DocumentPicker>
-
-                            <View style={styles.submitButton}>
-                            <Button
-                                title="Submit"
-                                onPress={() => {
-                                    setModalVisible(!modalVisible);
-                                }}
-                                buttonStyle={{backgroundColor:'red', justifyContent:'center'}}
-                                
-                            />
-                             <Button
-                                title="Cancel"
-                                onPress={() => {
-                                    setModalVisible(!modalVisible);
-                                }}
-                                buttonStyle={{backgroundColor:'green'}}
-                                
-                            />
-            </View>
-                        </View>
-                        </View>
-                    </Modal>
             <View style={styles.submitButton}>
-                <Button
-                    title="Add Submission"
-                    onPress={() => {
-                        setModalVisible(!modalVisible);
-                    }}
-                    
-                />
+                {showButton}
             </View>
             
             </View>
