@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Linking, StyleSheet, Modal, TouchableHighlight } from 'react-native'
 import { Text, Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
@@ -6,6 +6,7 @@ import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
 import firebase from '@react-native-firebase/app'
 import firestore from '@react-native-firebase/firestore';
+import { UserContext } from '../../../context/UserContext'
 
 export default function ViewAssignments({route, navigation}) {
     
@@ -14,8 +15,9 @@ export default function ViewAssignments({route, navigation}) {
     const [file,setFile] = useState();
     const [progress,setProgress]=useState('');
     const [buttonStat,setButtonStat] = useState('add');
+    const [Submission,setSubmission] = useState({state:'No attempts', file:''});
     var showButton = <Button></Button>
-
+    const user = useContext(UserContext);
 
     useEffect(() => {
         console.log(key)
@@ -24,11 +26,27 @@ export default function ViewAssignments({route, navigation}) {
         .doc(key)
         .get()
         .then(documentSnapshot => {
-            console.log('User exists: ', documentSnapshot.exists);
+            console.log('Assignment exists: ', documentSnapshot.exists);
 
             if (documentSnapshot.exists) {
             setItem(documentSnapshot.data());
-            console.log('User data: ', documentSnapshot.data());
+            //console.log('User data: ', documentSnapshot.data());
+            }
+        });
+       
+       firestore()
+        .collection('Assignments')
+        .doc(key)
+        .collection('Submissions')
+        .doc(user[1])
+        .get()
+        .then(documentSnapshot => {
+            console.log('User exists: ', documentSnapshot.exists);
+
+            if (documentSnapshot.exists) {
+            setSubmission(documentSnapshot.data());
+            setButtonStat('edit');
+           // console.log('Submission data: ', documentSnapshot.data());
             }
         });
     },[])
@@ -65,10 +83,51 @@ export default function ViewAssignments({route, navigation}) {
         });
 
         task.then(() => {
+            reference.getDownloadURL().then( url=>
+
+                {
+                    if(Submission.file == ''){
+                        firestore()
+                                .collection('Assignments')
+                                .doc(key)
+                                .collection('Submissions')
+                                .doc(user[1])
+                                .set({
+                                    state:'Assignment submitted',
+                                    file:file.fileName,
+                                    downloadURL:url
+                                })
+                                .then(() => {
+                                    console.log('Submission Created');                
+                                });
+
+
+                    }
+                    else{
+                        
+                        const ref = firebase.storage().ref(`Assignments/${Submission.file}`);
+                        ref.delete();
+
+                        firestore()
+                        .collection('Assignments')
+                        .doc(key)
+                        .collection('Submissions')
+                        .doc(user[1])
+                        .update({
+                            state:'Assignment submitted',
+                            file:file.fileName,
+                            downloadURL:url
+                        })
+                        .then(() => {
+                            console.log('User updated!');                
+                        });
+                            
+                        }
+                            })
             setProgress('File Successfully uploaded')
             setButtonStat('edit')
             
-            firestore()
+          /*firestore()
             .collection('Assignments')
             .doc(key)
             .update({
@@ -76,7 +135,7 @@ export default function ViewAssignments({route, navigation}) {
             })
             .then(() => {
                 console.log('User updated!');                
-            });
+            });*/
             
         })
         task.catch(error =>{
@@ -104,8 +163,15 @@ export default function ViewAssignments({route, navigation}) {
         case 'edit':
             showButton =  <Button
             title="Edit Submission"
-            onPress={editSubmit}/>
+            onPress={FileUpload}/>
             break;
+
+        case 'update':
+            showButton =  <Button
+            title="Update Submission"
+            onPress={handleSubmit}/>
+            break;
+
         default:
             showButton=<Button></Button>
 
@@ -127,13 +193,13 @@ export default function ViewAssignments({route, navigation}) {
             <Text h4>Submission Status</Text>
             <View style={styles.statusContent}>
 
-                    <Text>Submission Status : {item.SubStat}</Text>
+                    <Text>Submission Status : {Submission.state}</Text>
                     <Text>Grading Status :  {item.gradeStat}</Text>
                     <Text>Due Date : {item.DueDate}</Text>
                     <Text>Time Remaining :</Text>
                     <Text>Submission Comments :</Text>
 
-
+                    <Text>{Submission.file}</Text>
             </View>
 
             <View>
