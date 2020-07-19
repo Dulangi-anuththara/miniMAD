@@ -8,9 +8,6 @@ export default function Login({navigation}){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    useEffect(()=>{
-      console.log("Here log in")
-    })
 
     signIn = () =>{
       
