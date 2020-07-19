@@ -4,13 +4,12 @@ import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-player'
 
 
-export default function Player() {
+export default function Player({route,navigation}) {
 
-  const [url,setURL] = useState();
-  const [title,setTitle] = useState('TestTitle');
+  const {url,title} = route.params
 
   useEffect(()=>{
-    setURL('https://firebasestorage.googleapis.com/v0/b/minimad-b3931.appspot.com/o/y2mate.com%20-%20Draco%20Malfoy%20__%20Lovely_nOKQEuTjEI8_1080p.mp4?alt=media&token=ed482863-ee9f-4c4b-9c9c-bf12a5fc2ba1')
+    console.log(url);
   })
 
     return (
