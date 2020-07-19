@@ -19,7 +19,6 @@ export default function Chat() {
             
             var newChatArray = GiftedChat.append(message,msg);
             var MSG = newChatArray[0];
-            console.log(MSG);
             setMessage(oldArray => [MSG,...oldArray]);
             
         })

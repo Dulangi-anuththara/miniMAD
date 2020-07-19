@@ -7,15 +7,7 @@
  */
 
 import React, { useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  Button,
-} from 'react-native';
+
 
 import {
   Header,
@@ -26,7 +18,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import auth from '@react-native-firebase/auth';
-import { Login, Register, Home, SignOut, Assignments, Chat} from './src/screens';
+import { Login, Register, Home, SignOut, Assignments, Chat, Video} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -72,7 +64,7 @@ const App= () => {
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={Home} />
         <Drawer.Screen name="Account" component={Home} />
-        <Drawer.Screen name="Subjects" component={Home} />
+        <Drawer.Screen name="Subjects" component={Video} />
         <Drawer.Screen name="Chat" component={Chat} />
         <Drawer.Screen name="Assignments" component={Assignments} />
         <Drawer.Screen name="SignOut" component={SignOut} />       
