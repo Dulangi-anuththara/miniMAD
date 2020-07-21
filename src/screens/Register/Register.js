@@ -23,6 +23,7 @@ export default function Register(){
 
     const data ={
       id:res.user.uid,
+      email,
       name,
       year
     }

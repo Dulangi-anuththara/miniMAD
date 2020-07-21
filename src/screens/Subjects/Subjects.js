@@ -1,13 +1,22 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
+import { UserContext } from '../../../context/UserContext'
 
 export default function Subjects({navigation}) {
     const [subject,setSubject] = useState([]);
 
+    const user = useContext(UserContext);
+
+
     useEffect(() =>{
-       const Subscriber =firestore().collection('Subjects').onSnapshot(querySnapshot =>{
+        const year = user[3].year.toString();
+       const Subscriber =firestore()
+       .collection('Subjects')
+       .doc(year)
+       .collection('Subjects')
+       .onSnapshot(querySnapshot =>{
            const Subjects = [];
            querySnapshot.forEach(documentSnapshot =>{
                Subjects.push({
@@ -25,18 +34,24 @@ export default function Subjects({navigation}) {
         console.log(subject);
     }
     return (
-        <View>
-            <Text onPress={testFun}>Test</Text>
+        <View style={styles.container}>
             {subject.map((item) =>{
                return <Button 
                             title={item.Name} 
-                            key={item.id}
-                            buttonStyle={{width:400,marginBottom:20,height:70}}
+                            key={item.key}
+                            buttonStyle={{width:350,marginBottom:20,height:70,marginLeft:20,marginRight:20}}
                             onPress={() =>{navigation.navigate('LectureList',{
                                 key:item.key
-                            })}}></Button>
+                            })}}
+                            >
+                            </Button>
             })}
-            <Text onPress={() => navigation.navigate('VideoPlayer')}>Click here</Text>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container:{
+        marginTop:30
+    }
+})

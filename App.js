@@ -21,8 +21,9 @@ import auth from '@react-native-firebase/auth';
 import { Login, Register, Home, SignOut, Assignments, Chat, Lectures} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
 import { UserContext } from './context/UserContext'
+import firestore from '@react-native-firebase/firestore';
 
 const App= () => {
   const [initializing, setInitializing] = useState(true);
@@ -32,7 +33,16 @@ const App= () => {
   function onAuthStateChanged(user) {
     setUser(user);
     if(user) {
-          setData(data.concat(user.email,user.uid,user.displayName)) 
+          firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .get()
+          .then((documentSnapshot)=>{
+              if(documentSnapshot.exists){
+                setData(data.concat(user.email,user.uid,user.displayName,documentSnapshot.data()))
+              }
+          })
+           
              
     }
     if (initializing) setInitializing(false);
@@ -46,6 +56,8 @@ const App= () => {
 
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
+
+
 
   if (!user) {
     return (

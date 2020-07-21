@@ -74,7 +74,7 @@ uri:'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_ico
 const styles = StyleSheet.create({
 
     Container:{
-        backgroundColor:'#3096EE',
+        backgroundColor:'white',
         flex:1
     },
 
@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
         borderColor:'#3096EE',
         height: 100,
         flex: 1,
-        backgroundColor:'white'
+        backgroundColor:'white',
+        marginTop:10,
         //alignItems: 'center',
         //justifyContent: 'center'
     },
