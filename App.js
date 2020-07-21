@@ -31,7 +31,10 @@ const App= () => {
 
   function onAuthStateChanged(user) {
     setUser(user);
-    if(user) setData(data.concat(user.email,user.uid))    
+    if(user) {
+          setData(data.concat(user.email,user.uid,user.displayName)) 
+             
+    }
     if (initializing) setInitializing(false);
   }
   useEffect(() => {

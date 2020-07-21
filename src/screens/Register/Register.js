@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 export default function Register(){
@@ -8,12 +10,32 @@ export default function Register(){
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [year, setYear] = useState('');
+  const [name, setName] = useState('');
   
   signUp = () =>{
     auth()
   .createUserWithEmailAndPassword(email, password)
-  .then(() => {
-    console.log('User account created & signed in!');
+  .then((res) => {
+    res.user.updateProfile({
+      displayName:name
+    })
+
+    const data ={
+      id:res.user.uid,
+      name,
+      year
+    }
+
+    const userRef = firestore().collection('Users');
+    
+    userRef
+    .doc(res.user.uid)
+    .set(data)
+    .then(() =>{
+      console.log('User account created & signed in!');
+    })
+
   })
   .catch(error => {
     if (error.code === 'auth/email-already-in-use') {
@@ -45,6 +67,12 @@ export default function Register(){
       
   /> */}
       <TextInput style={styles.inputBox}                
+                 placeholder={'Full Name'}
+                 placeholderTextColor = {'white'}
+                 onChangeText={(val)=> setName(val)}
+      
+      />
+      <TextInput style={styles.inputBox}                
                  placeholder={'Email'}
                  placeholderTextColor = {'white'}
                  onChangeText={(val)=> setEmail(val)}
@@ -56,12 +84,20 @@ export default function Register(){
                  onChangeText={(val) => setPassword(val)}
       
       />
-     {/* <TextInput style={styles.inputBox}
-                 placeholder={'Confirm Password'}
-                 placeholderTextColor = {'white'}
-                 onChangeText={(val)=>setEmail(val)}
-      
-/> */}
+     <DropDownPicker
+                items={[
+                  {label:'First Year',value:1},
+                  {label:'Second Year',value:2},
+                  {label:'Third Year',value:3},
+                  {label:'Fourth Year',value:4},
+                  
+                ]}
+                defaultValue={year}
+                containerStyle={styles.dropDown}
+                onChangeItem={item =>{
+                  setYear(item.value)
+                }}
+                />
       <TouchableOpacity
                style = {styles.submitButton}
                onPress={signUp}
@@ -117,6 +153,11 @@ const styles = StyleSheet.create({
     textAlign:'center',
     fontSize: 18,
   },
+  dropDown:{
+    height:60,
+    width:320,
+    paddingLeft:20
+  }
  
 });
 
