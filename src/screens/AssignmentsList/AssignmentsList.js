@@ -51,28 +51,16 @@ export default function AssignmentsList({navigation}) {
       )}
     />
 
-<TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.TouchableOpacityStyle}
-          onPress={() => navigation.navigate('NewAnnouncement')}
-          >
-                  <Image
-             source={{
-uri:'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
-            }}
-            //You can use you project image Example below
-            //source={require('./images/float-add-icon.png')}
-            style={styles.FloatingButtonStyle}
-          />
- 
-        </TouchableOpacity>
-
 
     </View>
     )
 }
 
 const styles = StyleSheet.create({
+  Container:{
+    backgroundColor:'white',
+    flex:1
+},
 
     list:{
         borderWidth:3,
@@ -80,6 +68,8 @@ const styles = StyleSheet.create({
         borderColor:'#3096EE',
         height: 100,
         flex: 1,
+        backgroundColor:'white',
+        marginTop:10,
         //alignItems: 'center',
         //justifyContent: 'center'
     },

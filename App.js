@@ -18,7 +18,15 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import auth from '@react-native-firebase/auth';
-import { Login, Register, Home, SignOut, Assignments, Chat, Lectures} from './src/screens';
+import { 
+  Login, 
+  Register, 
+  Home, 
+  SignOut, 
+  Assignments, 
+  Chat, 
+  Lectures,
+  Profile} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
@@ -78,7 +86,7 @@ const App= () => {
       <UserContext.Provider value={data}>
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="Account" component={Home} />
+        <Drawer.Screen name="Account" component={Profile} />
         <Drawer.Screen name="Subjects" component={Lectures} />
         <Drawer.Screen name="Chat" component={Chat} />
         <Drawer.Screen name="Assignments" component={Assignments} />
