@@ -2,11 +2,42 @@ import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import Button from "react-native-button";
 import { AppStyles} from './AppStyles'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
-export default function EditProfile({routes,navigation}) {
-    const [fullname, setFullname] = useState();
-    const [phone, setphone] = useState()
-    const [Bio, setBio] = useState()
+export default function EditProfile({route,navigation}) {
+    const [fullname, setFullname] = useState('');
+    const [phone, setphone] = useState('')
+    const [Bio, setBio] = useState('')
+    const { key,name,phoneNo,bio } = route.params;
+
+    useEffect(()=>{
+        setBio(bio);
+        setphone(phoneNo);
+        setFullname(name);
+
+        console.log(auth().currentUser.displayName)
+    },[]);
+
+    handleSubmit = () =>{
+        firestore()
+        .collection('Users')
+        .doc(key)
+        .update({
+            name:fullname,
+            bio:Bio,
+            phone:phone
+        })
+        .then(()=>{
+            auth().currentUser.updateProfile({
+                displayName:fullname
+            })
+            console.log("Account Updated")
+        })
+        .then(() =>{
+            navigation.navigate('ViewProfile');
+        })
+    }
     return (
         <View style={styles.container}>
         <Text style={[styles.title, styles.leftTitle]}>Edit Account</Text>
@@ -45,7 +76,7 @@ export default function EditProfile({routes,navigation}) {
         <Button
           containerStyle={[styles.facebookContainer, { marginTop: 50 }]}
           style={styles.facebookText}
-          //onPress={() => this.onRegister()}
+          onPress={handleSubmit}
         >
           Edit
         </Button>

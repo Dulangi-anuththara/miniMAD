@@ -53,6 +53,7 @@ const App= () => {
            
              
     }
+    console.log(user);
     if (initializing) setInitializing(false);
   }
   useEffect(() => {

@@ -7,14 +7,26 @@ import {
     TouchableOpacity
   } from 'react-native';
 import { UserContext } from '../../../context/UserContext'
+import firestore from '@react-native-firebase/firestore';
 
 export default function ViewProfile({navigation}) {
 
     const user = useContext(UserContext);
     const[url,setURL] = useState('https://bootdey.com/img/Content/avatar/avatar6.png')
     const[bio,setBio] = useState('');
+    const [data, setData] = useState({name:'',email:'',bio:'',phone:''})
     useEffect(()=>{
-        console.log(user);
+      if(user){
+        const key=user[1]
+      firestore()
+      .collection('Users')
+      .doc(key)
+      .onSnapshot(documentSnapshot =>{
+        setData(documentSnapshot.data());
+      })
+    
+    }
+        
     },[]);
     return (
         <View style={styles.container}>
@@ -22,13 +34,19 @@ export default function ViewProfile({navigation}) {
           <Image style={styles.avatar} source={{uri:url}}/>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-            <Text style={styles.name}>{user[2]}</Text>
-            <Text style={styles.info}>{user[0]}</Text>
-            <Text style={styles.description}>{bio}</Text>
+            <Text style={styles.name}>{data.name}</Text>
+            <Text style={styles.info}>{data.email}</Text>
+            <Text style={styles.description}>{data.bio}</Text>
+            <Text style={styles.description}>{data.phone}</Text>
               
                           
               <TouchableOpacity style={styles.buttonContainer}
-              onPress={()=> navigation.navigate('EditProfile')}>
+              onPress={()=> navigation.navigate('EditProfile',{
+                key:data.id,
+                name:data.name,
+                phoneNo:data.phone,
+                bio:data.bio
+              })}>
                 <Text>Edit Account</Text> 
               </TouchableOpacity>
             </View>

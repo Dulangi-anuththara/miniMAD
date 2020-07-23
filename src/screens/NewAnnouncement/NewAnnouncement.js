@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, TextInput, } from 'react-native'
 import { Input,Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { UserContext } from '../../../context/UserContext'
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 export default function NewAnnouncement({navigation}) {
     const [Title, setTitle] = useState('');
@@ -11,13 +11,13 @@ export default function NewAnnouncement({navigation}) {
     const [date, setDate] = useState('');
     const [Author, setAuthor] = useState('')
 
-    const user = useContext(UserContext);
+    const user = auth().currentUser.displayName;
 
     useEffect(()=>{
         
         var today = new Date().toString().slice(0,25);
         setDate(today);
-        setAuthor(user[0]);
+        setAuthor(user);
         
         
     })
@@ -35,7 +35,7 @@ export default function NewAnnouncement({navigation}) {
             .collection('Announcements')
             .add(data)
             .then(() => {
-                console.log('User added!');
+                console.log('New Announcement added!');
                 navigation.navigate('Announcement')
             });
 
@@ -50,7 +50,7 @@ export default function NewAnnouncement({navigation}) {
             /> 
             <Text>Announcement</Text>
             <TextInput
-                style={{ height: 200, borderColor: 'red', borderWidth: 1, width:370, margin:10, borderRadius:6 }}
+                style={{ height: 200, borderColor: 'red', borderWidth: 1, width:370, margin:10, borderRadius:6, textAlignVertical:'top' }}
                 onChangeText={text => setAnnouncement(text)}
                 value={Announcement}
             />        

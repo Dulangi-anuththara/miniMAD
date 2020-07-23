@@ -42,7 +42,9 @@ export default function AssignmentsList({navigation}) {
           key:item.key
         })}> 
         <View style={styles.list}>
-          <Text style={styles.title}>{item.Title}</Text>
+         <View style={styles.header}> 
+         <Text style={styles.title}>{item.Title}</Text>
+         </View>
           <Text>by {item.DueDate}</Text>
 
             <Text> {item.SubjCode}</Text>
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
         height: 100,
         flex: 1,
         backgroundColor:'white',
-        marginTop:10,
+        margin:10,
         //alignItems: 'center',
         //justifyContent: 'center'
     },
@@ -96,4 +98,8 @@ const styles = StyleSheet.create({
     height: 70,
     //backgroundColor:'black'
   },
+  header:{
+    backgroundColor:'#B1D6F5',
+    height:40
+},
 })

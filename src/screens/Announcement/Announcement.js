@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
-
+const image = require('../../../img/plus.png')
 
 export default function Announcement({navigation}) {
 
@@ -42,7 +42,7 @@ export default function Announcement({navigation}) {
         <View style={styles.list}>
         <View style={styles.header}>
           <Text style={styles.title}>{item.Title}</Text>
-          <Text style={styles.Author}>by {item.Author}</Text>
+      <Text style={styles.Author}>by {item.Author} - {item.Date}</Text>
           </View>
 
             <Text style={styles.announcement}> {item.Announcement}</Text>
@@ -56,9 +56,7 @@ export default function Announcement({navigation}) {
           onPress={() => navigation.navigate('NewAnnouncement')}
           >
                   <Image
-             source={{
-uri:'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
-            }}
+             source={require('../../../img/plus.png')}
             //You can use you project image Example below
             //source={require('./images/float-add-icon.png')}
             style={styles.FloatingButtonStyle}
@@ -85,7 +83,8 @@ const styles = StyleSheet.create({
         height: 100,
         flex: 1,
         backgroundColor:'white',
-        marginTop:10,
+        margin:10,
+
         //alignItems: 'center',
         //justifyContent: 'center'
     },
