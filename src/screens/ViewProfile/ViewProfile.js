@@ -13,19 +13,23 @@ export default function ViewProfile({navigation}) {
 
     const user = useContext(UserContext);
     const[url,setURL] = useState('https://bootdey.com/img/Content/avatar/avatar6.png')
-    const[bio,setBio] = useState('');
     const [data, setData] = useState({name:'',email:'',bio:'',phone:''})
+
     useEffect(()=>{
-      if(user){
+      {/*if(user){
         const key=user[1]
-      firestore()
-      .collection('Users')
-      .doc(key)
-      .onSnapshot(documentSnapshot =>{
-        setData(documentSnapshot.data());
-      })
-    
-    }
+        console.log(key);
+        const subscriber= firestore()
+                          .collection('Users')
+                          .doc(key)
+                          .onSnapshot(documentSnapshot =>{
+                            if(documentSnapshot.exists){
+                            setData(documentSnapshot.data());
+                          }
+                          })
+                        return subscriber;*/}
+                        console.log(user);
+      
         
     },[]);
     return (
@@ -34,18 +38,18 @@ export default function ViewProfile({navigation}) {
           <Image style={styles.avatar} source={{uri:url}}/>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-            <Text style={styles.name}>{data.name}</Text>
-            <Text style={styles.info}>{data.email}</Text>
-            <Text style={styles.description}>{data.bio}</Text>
-            <Text style={styles.description}>{data.phone}</Text>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.info}>{user.email}</Text>
+            <Text style={styles.description}>{user.bio}</Text>
+            <Text style={styles.description}>{user.phone}</Text>
               
                           
               <TouchableOpacity style={styles.buttonContainer}
               onPress={()=> navigation.navigate('EditProfile',{
-                key:data.id,
-                name:data.name,
-                phoneNo:data.phone,
-                bio:data.bio
+                key:user.id,
+                name:user.name,
+                phoneNo:user.phone,
+                bio:user.bio
               })}>
                 <Text>Edit Account</Text> 
               </TouchableOpacity>

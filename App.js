@@ -36,7 +36,7 @@ import firestore from '@react-native-firebase/firestore';
 const App= () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const [data,setData] = useState([]);
+  const [data,setData] = useState({name:'kk'});
 
   function onAuthStateChanged(user) {
     setUser(user);
@@ -44,16 +44,15 @@ const App= () => {
           firestore()
           .collection('Users')
           .doc(user.uid)
-          .get()
-          .then((documentSnapshot)=>{
-              if(documentSnapshot.exists){
-                setData(data.concat(user.email,user.uid,user.displayName,documentSnapshot.data()))
-              }
-          })
-           
+          .onSnapshot((documentSnapshot)=>{
+            if(documentSnapshot.exists){
+              setData(documentSnapshot.data())
+              
+            }
+        })          
              
     }
-    console.log(user);
+   // console.log(user);
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
@@ -80,8 +79,26 @@ const App= () => {
       </NavigationContainer>
     );
   }
+else if(data.role == 1){
+  return(
+        <NavigationContainer>
+        <UserContext.Provider value={data}>
+        <Drawer.Navigator initialRouteName="Home">
+          <Drawer.Screen name="Home" component={Home} />
+          <Drawer.Screen name="Account" component={Profile} />
+          <Drawer.Screen name="Subjects" component={Lectures} />
+          <Drawer.Screen name="Assignments" component={Assignments} />
+          <Drawer.Screen name="SignOut" component={SignOut} />       
+                  
+        </Drawer.Navigator>
+        </UserContext.Provider>
+      </NavigationContainer>)
 
-  return (
+
+}
+else{ 
+
+   return (
     
     <NavigationContainer>
       <UserContext.Provider value={data}>
@@ -97,6 +114,8 @@ const App= () => {
       </UserContext.Provider>
     </NavigationContainer>
   );
+
+}
 };
 
 
