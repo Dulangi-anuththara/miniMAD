@@ -7,7 +7,7 @@ export default function LectureList({route,navigation}) {
     const {key} = route.params;
     const [lectures, setLectures] = useState([]);
     const user = useContext(UserContext);
-    const year = user[3].year.toString();
+    const year = user.year.toString();
 
     useEffect(()=>{
         

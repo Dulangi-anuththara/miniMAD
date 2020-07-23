@@ -15,7 +15,7 @@ export default function ViewAssignments({route, navigation}) {
     const [file,setFile] = useState();
     const [progress,setProgress]=useState('');
     const [buttonStat,setButtonStat] = useState('add');
-    const [Submission,setSubmission] = useState({state:'No attempts', file:''});
+    const [Submission,setSubmission] = useState({state:'No attempts', file:'',gradeState:'Not Graded'});
     var showButton = <Button></Button>
     const user = useContext(UserContext);
 
@@ -194,7 +194,7 @@ export default function ViewAssignments({route, navigation}) {
             <View style={styles.statusContent}>
 
                     <Text>Submission Status : {Submission.state}</Text>
-                    <Text>Grading Status :  {item.gradeStat}</Text>
+                    <Text>Grading Status :  {Submission.gradeState}</Text>
                     <Text>Due Date : {item.DueDate}</Text>
                     <Text>Time Remaining :</Text>
                     <Text>Submission Comments :</Text>

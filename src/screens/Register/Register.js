@@ -23,6 +23,7 @@ export default function Register(){
 
     const data ={
       id:res.user.uid,
+      role:1,
       email,
       name,
       year
@@ -93,6 +94,7 @@ export default function Register(){
                   {label:'Fourth Year',value:4},
                   
                 ]}
+                placeholder='Select Your Academic Year'
                 defaultValue={year}
                 containerStyle={styles.dropDown}
                 onChangeItem={item =>{

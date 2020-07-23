@@ -37,7 +37,9 @@ export default function Login({navigation}){
         />
         <TextInput style={styles.inputBox}
                    placeholder={'Password'}
+                   keyboardType='visible-password'
                    placeholderTextColor = {'white'}
+                   secureTextEntry={true}
                    onChangeText={(val)=> setPassword(val)}
         
         />
