@@ -14,8 +14,7 @@ export default function Subjects({navigation}) {
         const year = user.year.toString();
        const Subscriber =firestore()
        .collection('Subjects')
-       .doc(year)
-       .collection('Subjects')
+       .where('year','==',year)
        .onSnapshot(querySnapshot =>{
            const Subjects = [];
            querySnapshot.forEach(documentSnapshot =>{

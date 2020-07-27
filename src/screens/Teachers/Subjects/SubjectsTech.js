@@ -19,6 +19,7 @@ export default function SubjectsTech({navigation}) {
        .onSnapshot(querySnapshot =>{
            const Subjects = [];
            querySnapshot.forEach(documentSnapshot =>{
+               console.log(documentSnapshot.id);
                Subjects.push({
                    ...documentSnapshot.data(),
                    key:documentSnapshot.id
@@ -41,7 +42,9 @@ export default function SubjectsTech({navigation}) {
                             key={item.key}
                             buttonStyle={{width:350,marginBottom:20,height:70,marginLeft:20,marginRight:20}}
                             onPress={()=>{
-                                navigation.navigate('Subject')
+                                navigation.navigate('Subject',{
+                                    key:item.key
+                                })
                             }}
                             >
                             </Button>

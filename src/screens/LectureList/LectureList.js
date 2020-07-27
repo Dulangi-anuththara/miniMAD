@@ -11,7 +11,7 @@ export default function LectureList({route,navigation}) {
 
     useEffect(()=>{
         
-        const lectureRef =firestore().collection('Subjects').doc(year).collection('Subjects').doc(key).collection('Lectures')
+        const lectureRef =firestore().collection('Subjects').doc(key).collection('Lectures')
 
         const subscriber= lectureRef
         .onSnapshot(querySnapshot =>{

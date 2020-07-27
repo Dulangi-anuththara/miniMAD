@@ -1,17 +1,12 @@
-import React from 'react'
+import React, {useEffect, useContext} from 'react'
 import { View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { UserContext } from '../../../../context/UserContext'
+import LectureList from '../LectureList'
+import Lectures from '../Lectures';
 
-
-function HomeScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Home!</Text>
-      </View>
-    );
-  }
   
   function SettingsScreen() {
     return (
@@ -23,9 +18,12 @@ function HomeScreen() {
 
 const Tab = createBottomTabNavigator();
 
-export default function HomeSubjects() {
+export default function HomeSubjects({route}) {
+
+  const { key }=route.params
+
     return (
-        
+      <UserContext.Provider value={key}>
         <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -48,9 +46,9 @@ export default function HomeSubjects() {
           inactiveTintColor: 'gray',
         }}
       >
-          <Tab.Screen name="Home" component={HomeScreen} options={{title:'Lectures'}}/>
+          <Tab.Screen name="Home" component={Lectures} options={{title:'Lectures'}}/>
           <Tab.Screen name="Settings" component={SettingsScreen} options={{title:'Assignments'}}/>
         </Tab.Navigator>
-      
+        </UserContext.Provider>
     )
 }
