@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 export default function LecturesNav({navigation}) {
   return (
     <Stack.Navigator initialRouteName="LectureList">
-        <Stack.Screen name="LectureList" component={LectureList} options={{title:'Subjects',headerStyle:{
+        <Stack.Screen name="LectureList" component={LectureList} options={{title:'Lectures',headerStyle:{
           backgroundColor: '#3096EE'},
           headerTitleStyle: {
             color:'white',
@@ -18,7 +18,7 @@ export default function LecturesNav({navigation}) {
           headerTitleAlign:'center',
           headerLeft: () =><NavigationDrawerStructure navigationProps={navigation} />
         }}/>
-        <Stack.Screen name="NewLecture" component={NewLecture} options={{title:'Subject',headerStyle:{
+        <Stack.Screen name="NewLecture" component={NewLecture} options={{title:'New Lecture',headerStyle:{
           backgroundColor: '#3096EE'},
           headerTitleStyle: {
             color:'white',
