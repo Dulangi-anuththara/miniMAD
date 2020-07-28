@@ -7,7 +7,7 @@ import HomeSubjects from '../HomeSubjects/HomeSubjects'
 
 const Stack = createStackNavigator();
 
-export default function SubjectsNav({navigation}) {
+export default function SubjectsTech({navigation}) {
   return (
     <Stack.Navigator initialRouteName="SubjectList">
         <Stack.Screen name="SubjectList" component={Subjects} options={{title:'Subjects',headerStyle:{

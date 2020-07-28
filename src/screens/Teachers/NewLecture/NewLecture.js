@@ -1,18 +1,26 @@
 import React, {useState, useEffect} from 'react'
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
 import FilePickerManager from 'react-native-file-picker';
 import firebase from '@react-native-firebase/app';
+import firestore from '@react-native-firebase/firestore';
+import { utils } from '@react-native-firebase/app';
+import { Input } from 'react-native-elements';
 
 
 
-export default function NewLecture() {
+export default function NewLecture({route,navigation}) {
+
+    const { id } = route.params
     const [file,setFile] = useState();
     const [buttonStat,setButtonStat] = useState('add');
+    const [progress,setProgress]=useState('');
+    const [title, setTitle] = useState('');
     var showButton = <Button></Button>
 
     useEffect(()=>{
         console.log(file)
     },[file])
+
 
     const FileUpload = () => {
         FilePickerManager.showFilePicker(null, (response) => {
@@ -35,7 +43,7 @@ export default function NewLecture() {
 
     const handleSubmit = () =>{
         console.log(utils.FilePath.PICTURES_DIRECTORY)
-        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
+        const reference = firebase.storage().ref(`Lectures/${file.fileName}`);
 
         const pathToFile = file.path;
         const task = reference.putFile(pathToFile);
@@ -49,47 +57,23 @@ export default function NewLecture() {
         task.then(() => {
             reference.getDownloadURL().then( url=>
 
-                {
-                    if(Submission.file == ''){
-                        firestore()
-                                .collection('Assignments')
-                                .doc(key)
-                                .collection('Submissions')
-                                .doc(user[1])
-                                .set({
-                                    state:'Assignment submitted',
-                                    file:file.fileName,
-                                    downloadURL:url
+                { console.log(url) 
+                
+                    firestore()
+                                .collection('Subjects')
+                                .doc(id)
+                                .collection('Lectures')
+                                .add({
+                                    Name:title,
+                                    file:url
                                 })
-                                .then(() => {
-                                    console.log('Submission Created');                
-                                });
-
-
-                    }
-                    else{
-                        
-                        const ref = firebase.storage().ref(`Assignments/${Submission.file}`);
-                        ref.delete();
-
-                        firestore()
-                        .collection('Assignments')
-                        .doc(key)
-                        .collection('Submissions')
-                        .doc(user[1])
-                        .update({
-                            state:'Assignment submitted',
-                            file:file.fileName,
-                            downloadURL:url
-                        })
-                        .then(() => {
-                            console.log('User updated!');                
-                        });
-                            
-                        }
-                            })
-            setProgress('File Successfully uploaded')
-            setButtonStat('edit')
+                                .then(()=>{
+                                    console.log("New Lecture is Added");
+                                    navigation.navigate('LectureList')
+                                })          
+                            }
+                
+                    )
             
         })
         task.catch(error =>{
@@ -127,12 +111,24 @@ export default function NewLecture() {
     }
 
     return (
-        <View>
-            <Text>Hii</Text>
+        <View style={styles.container}>
+       
+
+            <Input
+            containerStyle={{marginTop:40}}
+            placeholder='Title'
+            leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
+            onChangeText={val => setTitle(val)}
+            value={title}
+            />
+        
+            <Text style={styles.textProgress}
+            >{progress}</Text>
             <View style={styles.submitButton}>
                 {showButton}
             </View>
-        </View>
+            </View>
+
     )
 }
 
@@ -140,8 +136,22 @@ const styles = StyleSheet.create({
     submitButton:{
         width:200,
         height:50,
+        justifyContent:'center',
         alignContent:'center',
         alignSelf:'center',
         flexDirection:'row'
     },
+    textInput:{
+        marginTop:10
+    },
+    container:{
+        backgroundColor:'#E8F0FF',
+        borderRadius:6,
+        flex:1
+    },
+    textProgress:{
+        marginBottom:30,
+        alignSelf:'center',
+    }
+
 })

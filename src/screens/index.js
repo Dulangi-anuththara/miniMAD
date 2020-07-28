@@ -6,7 +6,7 @@ import Assignments from './Assignments';
 import Chat from './Chat';
 import Lectures from './Lectures'
 import Profile from './Profile'
-import SubjectsTech from './Teachers/SubjectsNav'
+import SubjectsTech from './Teachers/SubjectsTech'
 //import Video from './VideoPlayer'
 //import Announcement from './Announcement';
 //import NewAnnouncement from './NewAnnouncement'

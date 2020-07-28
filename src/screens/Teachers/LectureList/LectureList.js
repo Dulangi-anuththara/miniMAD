@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../../../../context/UserContext'
 
@@ -9,7 +9,6 @@ export default function LectureList({navigation}) {
     const [lectures, setLectures] = useState([])
 
     useEffect(()=>{
-
         const Subscriber =firestore()
        .collection('Subjects')
        .doc(key)
@@ -26,27 +25,27 @@ export default function LectureList({navigation}) {
            setLectures(Lectures);
        });
        return () => Subscriber
-    })
+    },[])
 
     return (
         <View style={styles.container}>
-
-             {
-                lectures.map(item =>{
-                    return <Text 
-                                style={styles.list}
-                                key={item.key}
-                                onPress={() => 
-                                navigation.navigate('NewLecture')}>
-                              {item.Name}
-                      </Text>
-                })
-            }
+            <View>
+            <FlatList
+      data={lectures}
+      renderItem={({ item }) => (
+        <View style={styles.list}>
+            <Text style={styles.title}>{item.Name}</Text>
+        </View>
+      )}
+    />
+            </View>
 
 <TouchableOpacity
           activeOpacity={0.7}
           style={styles.TouchableOpacityStyle}
-          onPress={() => navigation.navigate('NewLecture')}
+          onPress={() => navigation.navigate('NewLecture',{
+              id:key
+          })}
           >
                   <Image
              source={require('../../../../img/plus.png')}
@@ -63,7 +62,8 @@ export default function LectureList({navigation}) {
 
 const styles = StyleSheet.create({
     container:{
-        flex:1
+        flex:1,
+        backgroundColor:'#E8F0FF'
     },
     list:{
         color:'blue',
@@ -85,4 +85,22 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
       },
+      header:{
+        backgroundColor:'#B1D6F5'
+    },
+    list:{
+        borderWidth:3,
+        borderRadius:6,
+        borderColor:'#40376E',
+        height: 50,
+        flex: 1,
+        backgroundColor:'white',
+        margin:10,
+    },
+    title:{
+        color:'#5E666E',
+        fontWeight: "bold",
+        fontSize:18,
+        padding:10
+    },
 })
