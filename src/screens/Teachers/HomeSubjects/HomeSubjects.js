@@ -7,17 +7,29 @@ import { UserContext } from '../../../../context/UserContext'
 import LectureList from '../LectureList'
 import { createStackNavigator } from '@react-navigation/stack';
 import NewLectures from '../NewLecture';
+import EditLecture from '../EditLecture';
+import AssignmetList from '../AssignmentList';
+import NewAssignment from '../NewAssignment'
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
 const HomeStack = createStackNavigator();
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="LectureList" component={LectureList} />
+    <HomeStack.Navigator initialRouteName="LectureList">
+      <HomeStack.Screen name="LectureList" component={LectureList} options={{title:"Lecture List"}}/>
       <HomeStack.Screen name="NewLecture" component={NewLectures} />
+      <HomeStack.Screen name="EditLecture" component={EditLecture}/>
+    </HomeStack.Navigator>
+  );
+}
+
+function AssignmentStackScreen() {
+  return (
+    <HomeStack.Navigator initialRouteName="AssignmentList">
+      <HomeStack.Screen name="AssignmentList" component={AssignmetList} options={{title:"Assignment List"}}/>
+      <HomeStack.Screen name="NewAssignment" component={NewAssignment} />
+      <HomeStack.Screen name="EditLecture" component={EditLecture}/>
     </HomeStack.Navigator>
   );
 }
@@ -60,7 +72,7 @@ export default function HomeSubjects({route}) {
         }}
       >
           <Tab.Screen name="Home" component={HomeStackScreen} options={{title:'Lectures'}}/>
-          <Tab.Screen name="Settings" component={SettingsScreen} options={{title:'Assignments'}}/>
+          <Tab.Screen name="Settings" component={AssignmentStackScreen} options={{title:'Assignments'}}/>
         </Tab.Navigator>
         </UserContext.Provider>
     )

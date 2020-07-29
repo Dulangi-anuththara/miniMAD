@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ListView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../../../../context/UserContext'
 
@@ -20,7 +20,6 @@ export default function LectureList({navigation}) {
                    ...documentSnapshot.data(),
                    key:documentSnapshot.id
                })
-               //console.log(documentSnapshot.data());
            })
            setLectures(Lectures);
        });
@@ -31,13 +30,30 @@ export default function LectureList({navigation}) {
         <View style={styles.container}>
             <View>
             <FlatList
+    style={styles.notificationList}
       data={lectures}
       renderItem={({ item }) => (
-        <View style={styles.list}>
-            <Text style={styles.title}>{item.Name}</Text>
+        <View style={styles.notificationBox}
+              >
+            <Image style={styles.image}
+                    source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
+            <Text style={styles.description}
+                onPress={()=>{
+                    navigation.navigate('EditLecture',{
+                        SubCode:key,
+                        LecCode:item.key,
+                        item:item,
+                        fileName:item.Name
+                    })
+                }}>{item.Title}</Text>
         </View>
       )}
+      
     />
+
+
+
+
             </View>
 
 <TouchableOpacity
@@ -63,13 +79,7 @@ export default function LectureList({navigation}) {
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#E8F0FF'
-    },
-    list:{
-        color:'blue',
-        margin:20,
-        marginLeft:60,
-        fontSize:18,
+        backgroundColor:'#EFF2F1'
     },
     TouchableOpacityStyle: {
         position: 'absolute',
@@ -85,22 +95,27 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
       },
-      header:{
-        backgroundColor:'#B1D6F5'
+    notificationList:{
+        marginTop:20,
+        padding:10,
     },
-    list:{
-        borderWidth:3,
-        borderRadius:6,
-        borderColor:'#40376E',
-        height: 50,
-        flex: 1,
-        backgroundColor:'white',
-        margin:10,
+    notificationBox: {
+        paddingVertical:20,
+        paddingLeft:20,
+        marginTop:5,
+        marginBottom:5,
+        marginHorizontal:5,
+        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
+        borderRadius:10,
     },
-    title:{
-        color:'#5E666E',
-        fontWeight: "bold",
+    image:{
+        width:45,
+        height:45,
+    },
+    description:{
         fontSize:18,
-        padding:10
+        color: "#3498db",
+        marginLeft:10,
     },
 })

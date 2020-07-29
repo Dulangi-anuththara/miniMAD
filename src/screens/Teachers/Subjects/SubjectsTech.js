@@ -40,7 +40,14 @@ export default function SubjectsTech({navigation}) {
                return <Button 
                             title={item.Name} 
                             key={item.key}
-                            buttonStyle={{width:350,marginBottom:20,height:70,marginLeft:20,marginRight:20}}
+                            buttonStyle={{
+                                width:380,
+                                marginTop:20,
+                                height:70,
+                                marginLeft:20,
+                                marginRight:20, 
+                                backgroundColor:'#0F7173',
+                                borderRadius:6}}
                             onPress={()=>{
                                 navigation.navigate('Subject',{
                                     key:item.key
@@ -55,6 +62,7 @@ export default function SubjectsTech({navigation}) {
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:30
+        backgroundColor:'#EFF2F1',
+        flex:1
     }
 })

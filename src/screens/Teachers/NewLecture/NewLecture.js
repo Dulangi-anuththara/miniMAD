@@ -1,25 +1,23 @@
 import React, {useState, useEffect} from 'react'
-import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
+import { Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { utils } from '@react-native-firebase/app';
-import { Input } from 'react-native-elements';
+
 
 
 
 export default function NewLecture({route,navigation}) {
 
     const { id } = route.params
-    const [file,setFile] = useState();
+    const [file,setFile] = useState({fileName:''});
     const [buttonStat,setButtonStat] = useState('add');
     const [progress,setProgress]=useState('');
     const [title, setTitle] = useState('');
+    const [name, setName] = useState('')
     var showButton = <Button></Button>
-
-    useEffect(()=>{
-        console.log(file)
-    },[file])
 
 
     const FileUpload = () => {
@@ -35,6 +33,7 @@ export default function NewLecture({route,navigation}) {
         else {
           setFile(response);
           setButtonStat('upload');
+          setName(response.fileName)
       
         }
       });
@@ -55,6 +54,7 @@ export default function NewLecture({route,navigation}) {
         });
 
         task.then(() => {
+
             reference.getDownloadURL().then( url=>
 
                 { console.log(url) 
@@ -64,11 +64,12 @@ export default function NewLecture({route,navigation}) {
                                 .doc(id)
                                 .collection('Lectures')
                                 .add({
-                                    Name:title,
-                                    file:url
+                                    Title:title,
+                                    file:url,
+                                    Name:file.fileName,
+                                    type:file.type
                                 })
                                 .then(()=>{
-                                    console.log("New Lecture is Added");
                                     navigation.navigate('LectureList')
                                 })          
                             }
@@ -84,6 +85,12 @@ export default function NewLecture({route,navigation}) {
     switch(buttonStat){
         case 'add':
             showButton =  <Button
+            buttonStyle={{
+                backgroundColor:'#8C5383',
+                width:150,
+                height:50,
+                borderRadius:10
+            }}
             title="Choose File"
             onPress={FileUpload}/>
             break;
@@ -112,16 +119,28 @@ export default function NewLecture({route,navigation}) {
 
     return (
         <View style={styles.container}>
-       
 
-            <Input
-            containerStyle={{marginTop:40}}
-            placeholder='Title'
-            leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
-            onChangeText={val => setTitle(val)}
-            value={title}
-            />
-        
+
+            <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+               placeholder='Title'
+              underlineColorAndroid='transparent'
+              onChangeText={val => setTitle(val)}
+              value={title}/>
+          <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+
+          </View>
+          <View style={styles.inputContainer}
+          onPress={()=> console.log("test")}
+          >
+          <TextInput style={styles.inputs}
+               placeholder='File'
+              underlineColorAndroid='transparent'
+              value={name}
+              editable ={false}
+              />
+          <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+        </View>
             <Text style={styles.textProgress}
             >{progress}</Text>
             <View style={styles.submitButton}>
@@ -134,8 +153,8 @@ export default function NewLecture({route,navigation}) {
 
 const styles = StyleSheet.create({
     submitButton:{
-        width:200,
-        height:50,
+        width:100,
+        height:500,
         justifyContent:'center',
         alignContent:'center',
         alignSelf:'center',
@@ -145,13 +164,48 @@ const styles = StyleSheet.create({
         marginTop:10
     },
     container:{
-        backgroundColor:'#E8F0FF',
+        backgroundColor:'#EFF2F1',
         borderRadius:6,
         flex:1
     },
     textProgress:{
         marginBottom:30,
         alignSelf:'center',
-    }
+    },
+    textName:{
+        fontSize:20,
+        marginHorizontal:40,
+        fontWeight:'bold'
+    },
+    inputContainer: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius:30,
+        borderBottomWidth: 1,
+        width:350,
+        height:45,
+        marginTop:50,
+        marginHorizontal:20,
+        flexDirection: 'row',
+        alignItems:'center',
+    
+        shadowColor: "#808080",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        }
+    },
+    inputs:{
+        height:45,
+        marginLeft:16,
+        borderBottomColor: '#FFFFFF',
+        flex:1,
+    },
+    inputIcon:{
+        width:30,
+        height:30,
+        marginRight:15,
+        justifyContent: 'center'
+      },
 
 })
