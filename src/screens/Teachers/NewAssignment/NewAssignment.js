@@ -10,7 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function NewAssignment({route,navigation}) {
 
-    const {id} =route.params
+    const {id,SubjCode,year} =route.params
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date().getTime());
     const [file,setFile] = useState();
@@ -19,6 +19,7 @@ export default function NewAssignment({route,navigation}) {
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [fileName, setFileName] = useState('Choose a File')
+    const [progress, setProgress] = useState('')
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -60,14 +61,29 @@ export default function NewAssignment({route,navigation}) {
     }
 
     const upload = () =>{
-        const data ={
-            Title:title,
-            Description:desc,
-            DueDate:date.toLocaleString(),
-            SubCode:'SCSC',
-            code:id,
-        }
-        const reference = firebase.storage().ref(`Lectures/${file.fileName}`);
+        var folder = ''
+        switch(year){
+
+          case '1':
+              folder="FirstYear"  
+              break;
+  
+          case '2':
+            folder="SecondYear"  
+              break;
+
+          case '3':
+            folder="ThirdYear"  
+            break;
+          case '4':
+              folder="FourthYear"  
+              break;             
+          default:
+              folder=""
+  
+  
+      }
+        const reference = firebase.storage().ref(`Assignments/${SubjCode}/${file.fileName}`);
 
         const pathToFile = file.path;
         const task = reference.putFile(pathToFile);
@@ -77,6 +93,43 @@ export default function NewAssignment({route,navigation}) {
             setProgress(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`)
             console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
         });
+        task.then(() => {
+
+          reference.getDownloadURL().then( url=>
+
+              { console.log(url) 
+              
+                  firestore()
+                              .collection('Assignments')
+                              .add({
+                                Title:title,
+                                Description:desc,
+                                DueDate:date.toLocaleString(),
+                                SubjCode:SubjCode,
+                                code:id,
+                                Assignment:url
+                              })
+                              .then((docRef)=>{
+                                  firestore()
+                                  .collection('Assignments')
+                                  .doc(docRef.id)
+                                  .collection('Submissions')
+                                  .add({
+                                    Name:"Test"
+                                  })
+                                  //navigation.navigate('AssignmentList')
+                              })
+                              .then(()=>{
+                                navigation.navigate('AssignmentList')
+                              })          
+                          }
+              
+                  )
+          
+      })
+      task.catch(error =>{
+          console.log(error)
+      });
     }
 
     
@@ -155,7 +208,7 @@ export default function NewAssignment({route,navigation}) {
 
           </View>
           </TouchableOpacity>
-
+            <Text>{progress}</Text>
         <Button 
             onPress={upload} 
             title="Upload"

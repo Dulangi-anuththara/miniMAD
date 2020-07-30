@@ -4,14 +4,14 @@ import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../../../../context/UserContext'
 
 export default function AssignmentList({navigation}) {
-    const key = useContext(UserContext)
+    const data = useContext(UserContext)
     const [assignments, setAssignments] = useState([])
 
     
     useEffect(()=>{
         const Subscriber =firestore()
        .collection('Assignments')
-       .where('code','==',key)
+       .where('code','==',data.key)
        .onSnapshot(querySnapshot =>{
            const Assignments = [];
            querySnapshot.forEach(documentSnapshot =>{
@@ -52,7 +52,9 @@ export default function AssignmentList({navigation}) {
             activeOpacity={0.7}
             style={styles.TouchableOpacityStyle}
             onPress={() => navigation.navigate('NewAssignment',{
-                id:key
+                id:data.key,
+                SubjCode:data.SubjCode,
+                year:data.year
             })}
             >
                     <Image

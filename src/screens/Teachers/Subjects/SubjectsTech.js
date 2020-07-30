@@ -50,7 +50,9 @@ export default function SubjectsTech({navigation}) {
                                 borderRadius:6}}
                             onPress={()=>{
                                 navigation.navigate('Subject',{
-                                    key:item.key
+                                    key:item.key,
+                                    SubjCode:item.id,
+                                    year:item.year
                                 })
                             }}
                             >

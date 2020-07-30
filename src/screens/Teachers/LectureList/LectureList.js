@@ -5,13 +5,13 @@ import { UserContext } from '../../../../context/UserContext'
 
 export default function LectureList({navigation}) {
 
-    const key = useContext(UserContext)
+    const data = useContext(UserContext)
     const [lectures, setLectures] = useState([])
 
     useEffect(()=>{
         const Subscriber =firestore()
        .collection('Subjects')
-       .doc(key)
+       .doc(data.key)
        .collection('Lectures')
        .onSnapshot(querySnapshot =>{
            const Lectures = [];
@@ -40,7 +40,7 @@ export default function LectureList({navigation}) {
             <Text style={styles.description}
                 onPress={()=>{
                     navigation.navigate('EditLecture',{
-                        SubCode:key,
+                        SubCode:data.key,
                         LecCode:item.key,
                         item:item,
                         fileName:item.Name
@@ -60,7 +60,7 @@ export default function LectureList({navigation}) {
           activeOpacity={0.7}
           style={styles.TouchableOpacityStyle}
           onPress={() => navigation.navigate('NewLecture',{
-              id:key
+              id:data.key
           })}
           >
                   <Image

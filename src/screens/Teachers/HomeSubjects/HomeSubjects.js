@@ -10,6 +10,7 @@ import NewLectures from '../NewLecture';
 import EditLecture from '../EditLecture';
 import AssignmetList from '../AssignmentList';
 import NewAssignment from '../NewAssignment'
+import EditAssignment from '../EditAssignment'
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
@@ -29,7 +30,7 @@ function AssignmentStackScreen() {
     <HomeStack.Navigator initialRouteName="AssignmentList">
       <HomeStack.Screen name="AssignmentList" component={AssignmetList} options={{title:"Assignment List"}}/>
       <HomeStack.Screen name="NewAssignment" component={NewAssignment} />
-      <HomeStack.Screen name="EditLecture" component={EditLecture}/>
+      <HomeStack.Screen name="EditAssignment" component={EditAssignment}/>
     </HomeStack.Navigator>
   );
 }
@@ -45,10 +46,16 @@ function AssignmentStackScreen() {
 
 export default function HomeSubjects({route}) {
 
-  const { key }=route.params
+  const { key,SubjCode,year }=route.params
+
+  const data={
+      key:key,
+      SubjCode:SubjCode,
+      year:year
+  }
 
     return (
-      <UserContext.Provider value={key}>
+      <UserContext.Provider value={data}>
         <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
