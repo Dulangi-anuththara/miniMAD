@@ -32,11 +32,16 @@ export default function AssignmentList({navigation}) {
         style={styles.notificationList}
         data={assignments}
         renderItem={({ item }) => (
-            <View style={styles.notificationBox}
-                >
+            <View style={styles.notificationBox}>
                 <Image style={styles.image}
                         source={{uri:"https://img.icons8.com/office/80/000000/archive.png"}}/>
                 <Text style={styles.description}
+                    onPress={()=>{
+                        navigation.navigate('EditAssignment',{
+                            key:item.key,
+                            SubjCode:data.SubjCode
+                        })
+                    }}
                     >{item.Title}</Text>
             </View>
         )}

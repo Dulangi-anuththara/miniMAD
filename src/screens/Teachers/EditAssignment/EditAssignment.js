@@ -1,37 +1,55 @@
-import React, {useState, useEffect}  from 'react'
-import { View, Text, StyleSheet, Linking, Alert, TouchableOpacity } from 'react-native'
-import { Button } from 'react-native-elements';
+import React, { useState, useEffect, useContext } from "react";
+import { View, Linking, StyleSheet, Modal, TouchableHighlight, Image } from 'react-native'
+import { Text, Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
+import { utils } from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
 import firebase from '@react-native-firebase/app'
 import firestore from '@react-native-firebase/firestore';
+import { UserContext } from '../../../../context/UserContext'
 
-
-export default function EditAssignment({route,navigation}) {
-
-    const { SubCode, LecCode, item}=route.params;
-    const [fileName, setfileName] = useState(item.Name);
+export default function EditAssignments({route, navigation}) {
+    
+    const {key, SubjCode} = route.params;
+    const[item,setItem] = useState([])
     const [file,setFile] = useState();
     const [progress,setProgress]=useState('');
-    const [buttonStat,setButtonStat] = useState('update');
+    const [buttonStat,setButtonStat] = useState('add');
+    const [Submission,setSubmission] = useState({state:'No attempts', file:'',gradeState:'Not Graded'});
     var showButton = <Button></Button>
+    const user = useContext(UserContext);
 
+    useEffect(() => {
+        console.log(key)
+        firestore()
+        .collection('Assignments')
+        .doc(key)
+        .get()
+        .then(documentSnapshot => {
+            console.log('Assignment exists: ', documentSnapshot.exists);
 
-    const createTwoButtonAlert = () =>
-    Alert.alert(
-      "Are you sure you want to delete this?",
-      "If you press 'OK' " + item.Title + " will be removed from the storage",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress:deleteLecture,
-        style:'default'
-        }
-      ],
-      { cancelable: false }
-    );
+            if (documentSnapshot.exists) {
+            setItem(documentSnapshot.data());
+            //console.log('User data: ', documentSnapshot.data());
+            }
+        });
+       
+       firestore()
+        .collection('Assignments')
+        .doc(key)
+        .collection('Submissions')
+        .doc(user[1])
+        .get()
+        .then(documentSnapshot => {
+            console.log('User exists: ', documentSnapshot.exists);
+
+            if (documentSnapshot.exists) {
+            setSubmission(documentSnapshot.data());
+            setButtonStat('edit');
+           // console.log('Submission data: ', documentSnapshot.data());
+            }
+        });
+    },[])
 
     const FileUpload = () => {
         FilePickerManager.showFilePicker(null, (response) => {
@@ -45,17 +63,15 @@ export default function EditAssignment({route,navigation}) {
         }
         else {
           setFile(response);
-          setfileName(response.fileName)
           setButtonStat('upload');
       
         }
       });
     
     }
-
-    const editLecture = () =>{
-
-        const reference = firebase.storage().ref(`Lectures/${file.fileName}`);
+    const handleSubmit = () =>{
+        console.log(utils.FilePath.PICTURES_DIRECTORY)
+        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
 
         const pathToFile = file.path;
         const task = reference.putFile(pathToFile);
@@ -67,34 +83,59 @@ export default function EditAssignment({route,navigation}) {
         });
 
         task.then(() => {
-
             reference.getDownloadURL().then( url=>
 
-                { console.log(url) 
-                
-                    firestore()
-                                .collection('Subjects')
-                                .doc(SubCode)
-                                .collection('Lectures')
-                                .doc(LecCode)
-                                .update({
-                                    file:url,
-                                    Name:file.fileName,
-                                    type:file.type
+                {
+                    if(Submission.file == ''){
+                        firestore()
+                                .collection('Assignments')
+                                .doc(key)
+                                .collection('Submissions')
+                                .doc(user[1])
+                                .set({
+                                    state:'Assignment submitted',
+                                    file:file.fileName,
+                                    downloadURL:url
                                 })
-                                .then(()=>{
-                                    console.log("Lecture Updated");
-                                    const ref = firebase.storage().ref(`Lectures/${item.Name}`);
-                                    ref.delete()
-                                    .then(() =>{
-                                        console.log("It'deleted")
-                                        navigation.goBack()
-                                   })
-                                    
-                                })          
-                            }
-                
-                    )
+                                .then(() => {
+                                    console.log('Submission Created');                
+                                });
+
+
+                    }
+                    else{
+                        
+                        const ref = firebase.storage().ref(`Assignments/${Submission.file}`);
+                        ref.delete();
+
+                        firestore()
+                        .collection('Assignments')
+                        .doc(key)
+                        .collection('Submissions')
+                        .doc(user[1])
+                        .update({
+                            state:'Assignment submitted',
+                            file:file.fileName,
+                            downloadURL:url
+                        })
+                        .then(() => {
+                            console.log('User updated!');                
+                        });
+                            
+                        }
+                            })
+            setProgress('File Successfully uploaded')
+            setButtonStat('edit')
+            
+          /*firestore()
+            .collection('Assignments')
+            .doc(key)
+            .update({
+                SubStat:'Assignment submitted',
+            })
+            .then(() => {
+                console.log('User updated!');                
+            });*/
             
         })
         task.catch(error =>{
@@ -102,48 +143,33 @@ export default function EditAssignment({route,navigation}) {
         });
     }
 
-    
-    const deleteLecture = () =>{
-
-        console.log("Here");
-        firestore()
-        .collection('Subjects')
-        .doc(SubCode)
-        .collection('Lectures')
-        .doc(LecCode)
-        .delete()
-        .then(() => {
-            console.log("Lecture Deleted");
-            const ref = firebase.storage().ref(`Lectures/${item.Name}`);
-            ref.delete()
-            .then(() =>{
-                    console.log("It deleted")
-                    navigation.goBack()
-            })
-    });
+    const editSubmit = () =>{
+        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
+        reference.delete();
+        setButtonStat('add')
     }
 
     switch(buttonStat){
-
+        case 'add':
+            showButton =  <Button
+            title="Add Submission"
+            onPress={FileUpload}/>
+            break;
         case 'upload':
             showButton =  <Button
             title="Upload"
-            buttonStyle={{
-                backgroundColor:'#CFD11A',
-                width:100
-            }}
-            onPress={editLecture}/>
+            onPress={handleSubmit}/>
+            break;
+        case 'edit':
+            showButton =  <Button
+            title="Edit Submission"
+            onPress={FileUpload}/>
             break;
 
         case 'update':
-            showButton = <Button
-            title="Update"
-            buttonStyle={{
-                backgroundColor:'#53A548',
-                width:100
-            }}
-            onPress={FileUpload}/>
-
+            showButton =  <Button
+            title="Update Submission"
+            onPress={handleSubmit}/>
             break;
 
         default:
@@ -152,96 +178,133 @@ export default function EditAssignment({route,navigation}) {
 
     }
 
-
-
     return (
-        <View style={styles.container}>
-            <Text style={styles.title} >{item.Title}</Text>
+        <View style={styles.Container}>
 
-            <View style={styles.details} >
- 
-            <Text
-            onPress={()=>{
-                Linking.openURL(item.file)
-            }}
-            style={styles.name}
-            >{fileName}</Text>            
+            <View style={styles.Box}>
+    <Text style={styles.descriptionOne}>{item.Title}-{SubjCode}</Text>
+                <Text style={styles.descriptionThree}>{item.Description}</Text>
+                <Text style={styles.descriptionThree}>Due Date : {item.DueDate}</Text>
+                
+                <View style={styles.imageBox}>
+                  <Image style={styles.image}
+                        source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
+                <Text style={styles.descriptionTwo}
+                  onPress={() => Linking.openURL(item.Assignment)}>{item.fileName}
+                  </Text>
+                
+                </View>
+                
             </View>
-            <Text>{progress}</Text>
-            <View style={styles.buttonArea}>
+
+
+            <View>
+            <Text style={styles.textStyle}>{progress}</Text>  
+            <View style={styles.submitButton}>
+            <Button
+            title="Edit Assignment"
+            buttonStyle={{
+                backgroundColor:'#CFD11A',
+                width:200
+            }}
+            onPress={()=> navigation.navigate('NewAssignment',{
+                item:item,
+                SubjCode:SubjCode,
+                key:key
+            })}/>
+            </View>
             
-              {showButton}
-                <Button
-                title="Delete"
-                buttonStyle={styles.button}
-                onPress={createTwoButtonAlert}
-                >
-                </Button>
             </View>
-
-            <Text
-            style={{
-                fontWeight:'700',
-                marginLeft:30,
-                textDecorationLine:'underline',
-            }}
-            onPress={()=>{
-                navigation.goBack()
-            }}>Go Back</Text>
         </View>
     )
 }
 
-const styles= StyleSheet.create({
-    container:{
-        backgroundColor:'white',
+const styles = StyleSheet.create({
+    Container:{
+        backgroundColor:'#EFF2F1',
         flex:1
     },
-    details:{
-        backgroundColor:'#C7FFED',
-        marginTop:20,
-        marginLeft:30,
-        marginRight:30,
-        borderColor:'#AB947E',
-        borderWidth:2,
-        borderRadius:6,
-        padding:30,
-        height:100
+    headerContent:{
+        borderWidth:1,
+        borderColor:'#3096EE',
+        padding:20,
+        margin:20
     },
-    title:{
-        fontWeight:'bold',
-        fontSize:24,
-        marginTop:80,
-        marginLeft:30
-    },
-    buttonArea:{
-        flexDirection:'row',
-        margin:30,
-        marginLeft:50,
-        backgroundColor:'white',
-        padding:30
-    },
-    button:{
-        marginLeft:30,
-        backgroundColor:'#931621',
-        width:100
-    },
-    name:{
-        color:'blue',
-        textDecorationLine:'underline'
-    },
-    shareButton: {
-        marginTop:10,
-        height:45,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius:30,
-        backgroundColor: "#00BFFF",
-      },
-      shareButtonText:{
-        color: "#FFFFFF",
-        fontSize:20,
-      },
+    statusContent:{
+        borderWidth:1,
+        borderColor:'#3096EE',
+        padding:20,
+        margin:20
 
+    },
+    submitButton:{
+        width:200,
+        height:50,
+        alignContent:'center',
+        alignSelf:'center',
+        flexDirection:'row'
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 5,
+        padding: 10,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        height:200,
+        width:350
+      },
+      centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
+      textStyle: {
+        color: "black",
+        fontWeight: "bold",
+        textAlign:'left',
+        marginLeft:10,
+        marginBottom:20
+      },
+      Box: {
+        padding:20,
+        margin:20,
+        backgroundColor: '#FFFFFF',
+        borderRadius:10,
+
+    },
+    descriptionOne:{
+        fontSize:28,
+        color: "#000000",
+        marginLeft:10,
+        fontWeight:'bold',
+        marginBottom:20
+    },
+    descriptionTwo:{
+        fontSize:18,
+        color: "#3498db",
+        marginLeft:10,
+    },
+    descriptionThree:{
+        fontSize:18,
+        color: 'black',
+        marginLeft:10,
+    },
+    image:{
+        width:45,
+        height:45,
+    },
+    imageBox:{
+        flexDirection:'row',
+        justifyContent:'center',
+        marginTop:20
+    }
 })
