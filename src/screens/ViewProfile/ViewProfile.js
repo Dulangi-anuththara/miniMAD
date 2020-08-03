@@ -60,7 +60,7 @@ export default function ViewProfile({navigation}) {
 }
 const styles = StyleSheet.create({
     header:{
-      backgroundColor: "#00BFFF",
+      backgroundColor: "#77CBB9",
       height:200,
     },
     avatar: {
@@ -112,6 +112,6 @@ const styles = StyleSheet.create({
       marginBottom:20,
       width:250,
       borderRadius:30,
-      backgroundColor: "#00BFFF",
+      backgroundColor: "#77CBB9",
     },
   });

@@ -11,7 +11,7 @@ export default function Home({navigation}) {
   return (
     <Stack.Navigator initialRouteName="Announcement">
         <Stack.Screen name="Announcement" component={Announcement} options={{title:'Announcements',headerStyle:{
-          backgroundColor: '#3096EE'},
+          backgroundColor: '#0F7173'},
           headerTitleStyle: {
             color:'white',
           },
@@ -19,7 +19,7 @@ export default function Home({navigation}) {
           headerLeft: () =><NavigationDrawerStructure navigationProps={navigation} />
         }}/>
         <Stack.Screen name="NewAnnouncement" component={NewAnnouncement} options={{title:'New Announcemet', headerStyle:{
-          backgroundColor: '#3096EE',},
+          backgroundColor: '#0F7173',},
           headerTitleStyle: {
             color:'white',
           },

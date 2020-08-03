@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-const image = require('../../../img/plus.png')
 
-export default function Announcement({navigation}) {
+
+export default function MyAnnouncements({navigation}) {
 
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
+  const userId= auth().currentUser.uid;
 
   useEffect(() => {
 
     const subscriber = firestore()
       .collection('Announcements')
+      .where('UserId','==',userId)
       .onSnapshot((querySnapshot) => {
         const users = [];
 
@@ -37,6 +39,7 @@ export default function Announcement({navigation}) {
     return (
         <View style={styles.container}>
             <FlatList
+
             style={styles.notificationList}
             data={users}
             renderItem={({ item }) => (
@@ -47,7 +50,14 @@ export default function Announcement({navigation}) {
               }}>
                     <Image style={styles.image}
                           source={{uri:"https://img.icons8.com/fluent/48/000000/note.png"}}/>
-                      <Text style={styles.title}>{item.Title}</Text>
+                      <Text style={styles.title}
+                            onPress={()=>{
+                                navigation.navigate('EditAnnouncements',{
+                                    key:item.key,
+                                    PrevTitle:item.Title,
+                                    PrevAnnouncement:item.Announcement
+                                })
+                            }}>{item.Title}</Text>
               </View>
                   <Text style={styles.Author}>by {item.Author} - {item.Date}</Text>
                 
@@ -59,20 +69,6 @@ export default function Announcement({navigation}) {
               </View>
             )}
     />
-
-<TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.TouchableOpacityStyle}
-          onPress={() => navigation.navigate('NewAnnouncement')}
-          >
-                  <Image
-             source={require('../../../img/plus.png')}
-            //You can use you project image Example below
-            //source={require('./images/float-add-icon.png')}
-            style={styles.FloatingButtonStyle}
-          />
- 
-        </TouchableOpacity>
 
 
     </View>

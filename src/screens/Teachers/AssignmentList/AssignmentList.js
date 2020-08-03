@@ -37,9 +37,10 @@ export default function AssignmentList({navigation}) {
                         source={{uri:"https://img.icons8.com/office/80/000000/archive.png"}}/>
                 <Text style={styles.description}
                     onPress={()=>{
-                        navigation.navigate('EditAssignment',{
+                        navigation.navigate('ViewAssignment',{
                             key:item.key,
-                            SubjCode:data.SubjCode
+                            SubjCode:data.SubjCode,
+                            id:data.key
                         })
                     }}
                     >{item.Title}</Text>

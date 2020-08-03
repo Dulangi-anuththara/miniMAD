@@ -27,7 +27,8 @@ import {
   Chat, 
   Lectures,
   Profile,
-SubjectsTech} from './src/screens';
+SubjectsTech,
+MyAnnouncements} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
@@ -86,6 +87,7 @@ else if(data.role == 1){
         <UserContext.Provider value={data}>
         <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="Home" component={Home} />
+          <Drawer.Screen name="My Announcements" component={MyAnnouncements} />
           <Drawer.Screen name="Account" component={Profile} />
           <Drawer.Screen name="Subjects" component={SubjectsTech} />
           <Drawer.Screen name="Assignments" component={Assignments} />

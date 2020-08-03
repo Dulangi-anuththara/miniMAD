@@ -11,7 +11,7 @@ export const AppStyles = {
     title: "#464646",
     subtitle: "#545454",
     categoryTitle: "#161616",
-    tint: "#3096EE",
+    tint: "#9FC490",
     description: "#bbbbbb",
     filterTitle: "#8a8a8a",
     starRating: "#2bdf85",

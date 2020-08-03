@@ -16,7 +16,8 @@ export default function NewLecture({route,navigation}) {
     const [buttonStat,setButtonStat] = useState('add');
     const [progress,setProgress]=useState('');
     const [title, setTitle] = useState('');
-    const [name, setName] = useState('')
+    const [name, setName] = useState('');
+    const [Desc, setDesc] = useState('')
     var showButton = <Button></Button>
 
 
@@ -67,7 +68,8 @@ export default function NewLecture({route,navigation}) {
                                     Title:title,
                                     file:url,
                                     Name:file.fileName,
-                                    type:file.type
+                                    type:file.type,
+                                    description:Desc
                                 })
                                 .then(()=>{
                                     navigation.navigate('LectureList')
@@ -127,6 +129,15 @@ export default function NewLecture({route,navigation}) {
               underlineColorAndroid='transparent'
               onChangeText={val => setTitle(val)}
               value={title}/>
+          <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+
+          </View>
+          <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+               placeholder='Description'
+              underlineColorAndroid='transparent'
+              onChangeText={val => setDesc(val)}
+              value={Desc}/>
           <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
 
           </View>

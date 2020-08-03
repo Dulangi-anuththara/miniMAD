@@ -1,3 +1,4 @@
+import ViewAssignment from './ViewAssignment'
 import EditAssignment from './EditAssignment'
 
-export default EditAssignment;
+export { ViewAssignment, EditAssignment} ;

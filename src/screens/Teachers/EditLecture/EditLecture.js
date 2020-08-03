@@ -1,5 +1,5 @@
 import React, {useState, useEffect}  from 'react'
-import { View, Text, StyleSheet, Linking, Alert, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Linking, Alert, TextInput,Image, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
 import firebase from '@react-native-firebase/app'
@@ -8,12 +8,19 @@ import firestore from '@react-native-firebase/firestore';
 
 export default function EditLecture({route,navigation}) {
 
-    const { SubCode, LecCode, item}=route.params;
+    const { SubCode, LecCode, item, Description}=route.params;
     const [fileName, setfileName] = useState(item.Name);
     const [file,setFile] = useState();
     const [progress,setProgress]=useState('');
-    const [buttonStat,setButtonStat] = useState('update');
-    var showButton = <Button></Button>
+    const [Stat,setStat] = useState(false);
+    const [Desc, setDesc] = useState('')
+
+    useEffect(() => {
+        setDesc(Description)
+        return () => {
+            
+        }
+    }, [])
 
 
     const createTwoButtonAlert = () =>
@@ -46,7 +53,7 @@ export default function EditLecture({route,navigation}) {
         else {
           setFile(response);
           setfileName(response.fileName)
-          setButtonStat('upload');
+          setStat(true);
       
         }
       });
@@ -55,6 +62,7 @@ export default function EditLecture({route,navigation}) {
 
     const editLecture = () =>{
 
+        if(Stat){
         const reference = firebase.storage().ref(`Lectures/${file.fileName}`);
 
         const pathToFile = file.path;
@@ -80,7 +88,8 @@ export default function EditLecture({route,navigation}) {
                                 .update({
                                     file:url,
                                     Name:file.fileName,
-                                    type:file.type
+                                    type:file.type,
+                                    Description:Desc
                                 })
                                 .then(()=>{
                                     console.log("Lecture Updated");
@@ -100,6 +109,22 @@ export default function EditLecture({route,navigation}) {
         task.catch(error =>{
             console.log(error)
         });
+        }else{
+
+            firestore()
+                        .collection('Subjects')
+                        .doc(SubCode)
+                        .collection('Lectures')
+                        .doc(LecCode)
+                        .update({
+                            Description:Desc
+                        })
+                        .then(()=>{
+                            navigation.goBack()
+                        })
+
+        }
+
     }
 
     
@@ -123,54 +148,61 @@ export default function EditLecture({route,navigation}) {
     });
     }
 
-    switch(buttonStat){
-
-        case 'upload':
-            showButton =  <Button
-            title="Upload"
-            buttonStyle={{
-                backgroundColor:'#CFD11A',
-                width:100
-            }}
-            onPress={editLecture}/>
-            break;
-
-        case 'update':
-            showButton = <Button
-            title="Update"
-            buttonStyle={{
-                backgroundColor:'#53A548',
-                width:100
-            }}
-            onPress={FileUpload}/>
-
-            break;
-
-        default:
-            showButton=<Button></Button>
-
-
-    }
-
 
 
     return (
         <View style={styles.container}>
             <Text style={styles.title} >{item.Title}</Text>
 
-            <View style={styles.details} >
+            
+            <View style={styles.inputContainer}>
+          <TextInput style={styles.inputs}
+                placeholder='Description'
+              underlineColorAndroid='transparent'
+              onChangeText={val => setDesc(val)}
+              value={Desc}
+              multiline={true}
+              numberOfLines={10}/>
+              
+          <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+
+          </View>
+
+            <View style={styles.fileContainer} >
  
             <Text
             onPress={()=>{
                 Linking.openURL(item.file)
             }}
             style={styles.name}
-            >{fileName}</Text>            
+            >{fileName}</Text>  
+             <Image style={styles.inputIcon} source={{uri:"https://img.icons8.com/nolan/64/add-file.png"}}/>          
             </View>
             <Text>{progress}</Text>
+
+            <Button
+            buttonStyle={{
+                backgroundColor:'#8C5383',
+                width:150,
+                height:40,
+                borderRadius:10,
+                justifyContent:'center',
+                alignSelf:'center'
+            }}
+            title="Choose File"
+            onPress={FileUpload}/>
+
             <View style={styles.buttonArea}>
-            
-              {showButton}
+               
+                <Button
+                    title="Update"
+                    buttonStyle={{
+                        backgroundColor:'#848C8E',
+                        width:100,
+                        borderRadius:7
+                    }}
+                    onPress={editLecture}/>
+
                 <Button
                 title="Delete"
                 buttonStyle={styles.button}
@@ -179,22 +211,19 @@ export default function EditLecture({route,navigation}) {
                 </Button>
             </View>
 
-            <Text
-            style={{
-                fontWeight:'700',
-                marginLeft:30,
-                textDecorationLine:'underline',
-            }}
-            onPress={()=>{
-                navigation.goBack()
-            }}>Go Back</Text>
+            <TouchableOpacity
+                    onPress={()=>{navigation.goBack()}}>
+            <Image style={styles.FloatingButtonStyle} 
+                   source={{uri:"https://img.icons8.com/nolan/128/circled-chevron-left.png"}}/>
+            </TouchableOpacity>
+
         </View>
     )
 }
 
 const styles= StyleSheet.create({
     container:{
-        backgroundColor:'white',
+        backgroundColor:'#EFF2F1',
         flex:1
     },
     details:{
@@ -211,23 +240,30 @@ const styles= StyleSheet.create({
     title:{
         fontWeight:'bold',
         fontSize:24,
-        marginTop:80,
+        marginTop:40,
         marginLeft:30
     },
     buttonArea:{
         flexDirection:'row',
-        margin:30,
+        marginTop:50,
         marginLeft:50,
-        backgroundColor:'white',
-        padding:30
+        backgroundColor:'#EFF2F1',
+        padding:30,
+        justifyContent:'flex-end'
     },
     button:{
         marginLeft:30,
-        backgroundColor:'#931621',
-        width:100
+        backgroundColor:'#848C8E',
+        width:100,
+        borderRadius:7
     },
     name:{
         color:'blue',
+        height:45,
+        marginLeft:16,
+        paddingTop:10,
+        borderBottomColor: '#FFFFFF',
+        flex:1,
         textDecorationLine:'underline'
     },
     shareButton: {
@@ -242,6 +278,62 @@ const styles= StyleSheet.create({
       shareButtonText:{
         color: "#FFFFFF",
         fontSize:20,
+      },
+      inputContainer: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius:30,
+        borderBottomWidth: 1,
+        width:350,
+        height:70,
+        marginTop:50,
+        marginHorizontal:20,
+        flexDirection: 'row',
+        alignItems:'center',
+       paddingTop:10,
+        shadowColor: "#808080",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        }
+    },
+    inputs:{
+        height:45,
+        marginLeft:16,
+        borderBottomColor: '#FFFFFF',
+        flex:1,
+        alignSelf:'flex-start'
+    },
+    inputIcon:{
+        width:30,
+        height:30,
+        marginRight:15,
+        justifyContent: 'center',
+        justifyContent:'space-around'
+    },
+    fileContainer: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius:30,
+        borderBottomWidth: 1,
+        width:350,
+        height:45,
+        marginTop:50,
+        marginHorizontal:20,
+        flexDirection: 'row',
+        alignItems:'center',
+    
+        shadowColor: "#808080",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        }
+    },
+    FloatingButtonStyle: {
+        resizeMode: 'contain',
+        width: 70,
+        height: 70,
+        marginLeft:20
       },
 
 })

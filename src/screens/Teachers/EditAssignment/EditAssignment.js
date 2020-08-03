@@ -1,59 +1,58 @@
-import React, { useState, useEffect, useContext } from "react";
-import { View, Linking, StyleSheet, Modal, TouchableHighlight, Image } from 'react-native'
-import { Text, Button } from 'react-native-elements';
+import React, {useState, useEffect} from 'react'
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Platform, Alert } from 'react-native';
+import { Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
-import { utils } from '@react-native-firebase/app';
-import storage from '@react-native-firebase/storage';
-import firebase from '@react-native-firebase/app'
+import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
-import { UserContext } from '../../../../context/UserContext'
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function EditAssignments({route, navigation}) {
-    
-    const {key, SubjCode} = route.params;
-    const[item,setItem] = useState([])
+
+
+export default function EditAssignment({route,navigation}) {
+
+    const {item,key,SubjCode, id} =route.params
+    const [date, setDate] = useState(new Date());
     const [file,setFile] = useState();
-    const [progress,setProgress]=useState('');
-    const [buttonStat,setButtonStat] = useState('add');
-    const [Submission,setSubmission] = useState({state:'No attempts', file:'',gradeState:'Not Graded'});
-    var showButton = <Button></Button>
-    const user = useContext(UserContext);
+    const [title, setTitle] = useState('');
+    const [desc, setDesc] = useState('');
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+    const [state, setState] = useState(false)
+    const [fileName, setFileName] = useState('Choose a File')
+    const [progress, setProgress] = useState('')
 
-    useEffect(() => {
-        console.log(key)
-        firestore()
-        .collection('Assignments')
-        .doc(key)
-        .get()
-        .then(documentSnapshot => {
-            console.log('Assignment exists: ', documentSnapshot.exists);
 
-            if (documentSnapshot.exists) {
-            setItem(documentSnapshot.data());
-            //console.log('User data: ', documentSnapshot.data());
-            }
-        });
-       
-       firestore()
-        .collection('Assignments')
-        .doc(key)
-        .collection('Submissions')
-        .doc(user[1])
-        .get()
-        .then(documentSnapshot => {
-            console.log('User exists: ', documentSnapshot.exists);
-
-            if (documentSnapshot.exists) {
-            setSubmission(documentSnapshot.data());
-            setButtonStat('edit');
-           // console.log('Submission data: ', documentSnapshot.data());
-            }
-        });
+    useEffect(()=>{
+        setTitle(item.Title);
+        setDesc(item.Description)
+        setDate(item.DueDate)
+        setFileName(item.fileName)
+      return
     },[])
 
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === 'ios');
+        setDate(currentDate);
+      };
+     
+      const showMode = currentMode => {
+        setShow(true);
+        setMode(currentMode);
+      };
+     
+      const showDatepicker = () => {
+        showMode('date');
+      };
+     
+      const showTimepicker = () => {
+        showMode('time');
+      };
+
+      
     const FileUpload = () => {
         FilePickerManager.showFilePicker(null, (response) => {
-        console.log('Response = ', response);
+        //console.log('Response = ', response);
        
         if (response.didCancel) {
           console.log('User cancelled file picker');
@@ -63,15 +62,35 @@ export default function EditAssignments({route, navigation}) {
         }
         else {
           setFile(response);
-          setButtonStat('upload');
+          setFileName(response.fileName)
+          setState(true)
       
         }
       });
     
     }
-    const handleSubmit = () =>{
-        console.log(utils.FilePath.PICTURES_DIRECTORY)
-        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
+
+    const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Are you sure you want to delete this?",
+      "If you press 'OK' " + item.Title + " will be removed from the storage",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress:DeleteAssignment,
+        style:'default'
+        }
+      ],
+      { cancelable: false }
+    );
+
+    const upload = () =>{
+      
+        if(state){
+            const reference = firebase.storage().ref(`Assignments/${SubjCode}/${file.fileName}`);
 
         const pathToFile = file.path;
         const task = reference.putFile(pathToFile);
@@ -81,230 +100,240 @@ export default function EditAssignments({route, navigation}) {
             setProgress(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`)
             console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
         });
-
         task.then(() => {
-            reference.getDownloadURL().then( url=>
 
-                {
-                    if(Submission.file == ''){
-                        firestore()
-                                .collection('Assignments')
-                                .doc(key)
-                                .collection('Submissions')
-                                .doc(user[1])
-                                .set({
-                                    state:'Assignment submitted',
-                                    file:file.fileName,
-                                    downloadURL:url
-                                })
-                                .then(() => {
-                                    console.log('Submission Created');                
-                                });
+          reference.getDownloadURL().then( url=>
 
-
-                    }
-                    else{
-                        
-                        const ref = firebase.storage().ref(`Assignments/${Submission.file}`);
-                        ref.delete();
-
-                        firestore()
-                        .collection('Assignments')
-                        .doc(key)
-                        .collection('Submissions')
-                        .doc(user[1])
-                        .update({
-                            state:'Assignment submitted',
-                            file:file.fileName,
-                            downloadURL:url
-                        })
-                        .then(() => {
-                            console.log('User updated!');                
-                        });
-                            
-                        }
-                            })
-            setProgress('File Successfully uploaded')
-            setButtonStat('edit')
-            
-          /*firestore()
-            .collection('Assignments')
-            .doc(key)
-            .update({
-                SubStat:'Assignment submitted',
-            })
-            .then(() => {
-                console.log('User updated!');                
-            });*/
-            
-        })
-        task.catch(error =>{
-            console.log(error)
-        });
+              { console.log(url) 
+              
+                  firestore()
+                              .collection('Assignments')
+                              .doc(key)
+                              .update({
+                                Title:title,
+                                Description:desc,
+                                DueDate:date.toLocaleString(),
+                                SubjCode:SubjCode,
+                                code:id,
+                                Assignment:url,
+                                fileName:fileName
+                              })
+                              .then(()=>{
+                                const ref = firebase.storage().ref(`Assignments/${SubjCode}/${item.fileName}`);
+                                ref.delete()
+                              })
+                              .then(()=>{
+                                navigation.navigate('AssignmentList')
+                              })          
+                          }
+              
+                  )
+          
+      })
+      task.catch(error =>{
+          console.log(error)
+      });
+    }else{
+        firestore()
+                              .collection('Assignments')
+                              .doc(key)
+                              .update({
+                                Title:title,
+                                Description:desc,
+                                DueDate:date.toLocaleString(),
+                                SubjCode:SubjCode,
+                                code:id,
+                              })
+    }
     }
 
-    const editSubmit = () =>{
-        const reference = firebase.storage().ref(`Assignments/${file.fileName}`);
-        reference.delete();
-        setButtonStat('add')
+    const DeleteAssignment = () =>{
+        firestore()
+                    .collection('Assignments')
+                    .doc(key)
+                    .delete()
+                    .then(()=>{
+                        navigation.navigate('AssignmentList')
+                    })
     }
-
-    switch(buttonStat){
-        case 'add':
-            showButton =  <Button
-            title="Add Submission"
-            onPress={FileUpload}/>
-            break;
-        case 'upload':
-            showButton =  <Button
-            title="Upload"
-            onPress={handleSubmit}/>
-            break;
-        case 'edit':
-            showButton =  <Button
-            title="Edit Submission"
-            onPress={FileUpload}/>
-            break;
-
-        case 'update':
-            showButton =  <Button
-            title="Update Submission"
-            onPress={handleSubmit}/>
-            break;
-
-        default:
-            showButton=<Button></Button>
-
-
-    }
-
+    
     return (
-        <View style={styles.Container}>
+        <View>
 
-            <View style={styles.Box}>
-    <Text style={styles.descriptionOne}>{item.Title}-{SubjCode}</Text>
-                <Text style={styles.descriptionThree}>{item.Description}</Text>
-                <Text style={styles.descriptionThree}>Due Date : {item.DueDate}</Text>
-                
-                <View style={styles.imageBox}>
-                  <Image style={styles.image}
-                        source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
-                <Text style={styles.descriptionTwo}
-                  onPress={() => Linking.openURL(item.Assignment)}>{item.fileName}
-                  </Text>
-                
-                </View>
-                
-            </View>
+            <View style={styles.inputContainer}>
+             <TextInput style={styles.inputs}
+               placeholder='Title'
+              underlineColorAndroid='transparent'
+              onChangeText={text => setTitle(text)}
+              value={title}
+             
+                />
+             <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+
+          </View>
+
+          <View style={styles.inputContainer}>
+             <TextInput style={styles.inputs}
+               placeholder='Description'
+              underlineColorAndroid='transparent'
+              onChangeText={(val) => setDesc(val)} 
+              value={desc}            
+                />
+             <Image style={styles.inputIcon} source={{uri: 'https://img.icons8.com/nolan/64/sorting-answers.png'}}/>
+
+          </View>
+
+    {/* Date Picker */}      
+          <View style={styles.inputContainer}>
+             <TextInput style={styles.inputs}
+               placeholder='Submission Date'
+              underlineColorAndroid='transparent'
+              value={date.toLocaleString()}
+              editable ={false}
+            />
+
+          </View>
 
 
-            <View>
-            <Text style={styles.textStyle}>{progress}</Text>  
-            <View style={styles.submitButton}>
-            <Button
-            title="Edit Assignment"
-            buttonStyle={{
-                backgroundColor:'#CFD11A',
-                width:200
-            }}
-            onPress={()=> navigation.navigate('NewAssignment',{
-                item:item,
-                SubjCode:SubjCode,
-                key:key
-            })}/>
-            </View>
-            
-            </View>
+          <View style={styles.datetimeButton}>
+              <TouchableOpacity
+                style={{borederWidth:2,borderColor:'white'}}
+               onPress={showDatepicker}>
+              <Image style={styles.inputIcon} 
+             source={{uri:"https://img.icons8.com/nolan/64/calendar-1.png"}}
+             /> 
+              </TouchableOpacity>
+        
+            <TouchableOpacity
+
+            onPress={showTimepicker}>
+                
+            <Image style={styles.inputIcon} 
+             source={{uri:"https://img.icons8.com/nolan/64/time-span.png"}}
+             />
+            </TouchableOpacity>
+          </View>
+
+
+          <TouchableOpacity
+          onPress={FileUpload}>
+          <View style={styles.inputContainer}>        
+              <Text style={{
+                  height:45,
+                  textAlign:'center',
+                  paddingTop:10,
+                  borderBottomColor: '#FFFFFF',
+                  flex:1,
+                  fontSize:16,
+                  color:'#8C5383'
+              }}>{fileName}</Text>  
+            <Image style={styles.inputIcon} 
+             source={{uri:"https://img.icons8.com/nolan/64/add-file.png"}}
+             />
+
+          </View>
+          </TouchableOpacity>
+            <Text>{progress}</Text>
+        
+
+<View style={styles.buttonArea}>
+               
+               <Button
+                   title="Update"
+                   buttonStyle={{
+                       backgroundColor:'#8C5383',
+                       width:100,
+                       borderRadius:7
+                   }}
+                   onPress={upload}
+                   />
+
+               <Button
+               title="Delete"
+               buttonStyle={styles.button}
+               onPress={createTwoButtonAlert}
+               >
+               </Button>
+           </View>
+
+
+            {show && (
+                <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+                />
+            )}
+
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    Container:{
-        backgroundColor:'#EFF2F1',
-        flex:1
-    },
-    headerContent:{
-        borderWidth:1,
-        borderColor:'#3096EE',
-        padding:20,
-        margin:20
-    },
-    statusContent:{
-        borderWidth:1,
-        borderColor:'#3096EE',
-        padding:20,
-        margin:20
-
-    },
-    submitButton:{
-        width:200,
+    inputContainer: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius:30,
+        borderBottomWidth: 1,
+        width:350,
         height:50,
-        alignContent:'center',
-        alignSelf:'center',
-        flexDirection:'row'
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 5,
-        padding: 10,
-        alignItems: "center",
-        shadowColor: "#000",
+        marginTop:40,
+        marginHorizontal:20,
+        flexDirection: 'row',
+        alignItems:'center',
+    
+        shadowColor: "#808080",
         shadowOffset: {
           width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        height:200,
-        width:350
-      },
-      centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
-      },
-      textStyle: {
-        color: "black",
-        fontWeight: "bold",
-        textAlign:'left',
-        marginLeft:10,
-        marginBottom:20
-      },
-      Box: {
-        padding:20,
-        margin:20,
-        backgroundColor: '#FFFFFF',
-        borderRadius:10,
-
+          height: 2,
+        }
     },
-    descriptionOne:{
-        fontSize:28,
-        color: "#000000",
-        marginLeft:10,
-        fontWeight:'bold',
-        marginBottom:20
-    },
-    descriptionTwo:{
-        fontSize:18,
-        color: "#3498db",
-        marginLeft:10,
-    },
-    descriptionThree:{
-        fontSize:18,
-        color: 'black',
-        marginLeft:10,
-    },
-    image:{
-        width:45,
+    inputs:{
         height:45,
+        marginLeft:16,
+        borderBottomColor: '#FFFFFF',
+        flex:1,
     },
-    imageBox:{
+    inputIcon:{
+        width:30,
+        height:30,
+        marginRight:15,
+        justifyContent: 'center'
+      },
+    datetimeButton:{
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#DDC4DD',
+        borderRadius:30,
+        borderBottomWidth: 1,
+        width:350,
+        height:50,
+        marginTop:40,
+        marginHorizontal:20,
+        flexDirection: 'row',
+        alignItems:'center',
+    
+        shadowColor: "#808080",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        justifyContent:'space-evenly'
+    },
+    buttonArea:{
         flexDirection:'row',
-        justifyContent:'center',
-        marginTop:20
-    }
+        marginTop:30,
+        marginLeft:50,
+        backgroundColor:'#EFF2F1',
+        padding:30,
+        justifyContent:'flex-end'
+    },
+    button:{
+        marginLeft:30,
+        backgroundColor:'#BA1B1D',
+        width:100,
+        borderRadius:7
+    },
 })

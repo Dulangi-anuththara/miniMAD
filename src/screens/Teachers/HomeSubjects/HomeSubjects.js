@@ -10,7 +10,8 @@ import NewLectures from '../NewLecture';
 import EditLecture from '../EditLecture';
 import AssignmetList from '../AssignmentList';
 import NewAssignment from '../NewAssignment'
-import EditAssignment from '../EditAssignment'
+import { ViewAssignment, EditAssignment} from '../EditAssignment'
+
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
@@ -30,7 +31,8 @@ function AssignmentStackScreen() {
     <HomeStack.Navigator initialRouteName="AssignmentList">
       <HomeStack.Screen name="AssignmentList" component={AssignmetList} options={{title:"Assignment List"}}/>
       <HomeStack.Screen name="NewAssignment" component={NewAssignment} />
-      <HomeStack.Screen name="EditAssignment" component={EditAssignment}/>
+      <HomeStack.Screen name="EditAssignment" component={EditAssignment} />
+      <HomeStack.Screen name="ViewAssignment" component={ViewAssignment}/>
     </HomeStack.Navigator>
   );
 }

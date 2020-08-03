@@ -33,8 +33,8 @@ export default function LectureList({navigation}) {
     style={styles.notificationList}
       data={lectures}
       renderItem={({ item }) => (
-        <View style={styles.notificationBox}
-              >
+        <View style={styles.notificationBox}>
+              
             <Image style={styles.image}
                     source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
             <Text style={styles.description}
@@ -43,7 +43,8 @@ export default function LectureList({navigation}) {
                         SubCode:data.key,
                         LecCode:item.key,
                         item:item,
-                        fileName:item.Name
+                        fileName:item.Name,
+                        Description:item.Description
                     })
                 }}>{item.Title}</Text>
         </View>

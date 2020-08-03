@@ -31,6 +31,7 @@ export default function Login({navigation}){
         <View>
         <TextInput style={styles.inputBox}
                    placeholder={'Email'}
+                   keyboardType='email-address'
                    placeholderTextColor = {'white'}
                    onChangeText={(val)=>setEmail(val)}
         
@@ -66,7 +67,7 @@ export default function Login({navigation}){
   const styles = StyleSheet.create({
   
     body: {
-      backgroundColor: '#3096EE',
+      backgroundColor: '#2A9134',
       flex: 1,
       justifyContent: 'flex-start',
       alignItems: 'center'
@@ -101,7 +102,7 @@ export default function Login({navigation}){
       borderRadius:5
     },
     submitButtonText:{
-      color: '#3096EE',
+      color: 'black',
       fontWeight: 'bold',
       textAlign:'center',
       fontSize: 18,

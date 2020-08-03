@@ -11,14 +11,20 @@ export default function Assignments({navigation}) {
   return (
     <Stack.Navigator initialRouteName="AssignmentsList">
         <Stack.Screen name="AssignmentsList" component={AssignmentsList} options={{title:'Assignments',headerStyle:{
-          backgroundColor: '#3096EE'},
+          backgroundColor: '#0F7173'},
           headerTitleStyle: {
             color:'white',
           },
           headerTitleAlign:'center',
           headerLeft: () =><NavigationDrawerStructure navigationProps={navigation} />
         }}/>
-        <Stack.Screen name="ViewAssignments" component={ViewAssignments} />
+        <Stack.Screen name="ViewAssignments" component={ViewAssignments} options={{title:'Assignment',headerStyle:{
+          backgroundColor: '#0F7173'},
+          headerTitleStyle: {
+            color:'white',
+          },
+          headerTitleAlign:'center',
+        }}/>
       </Stack.Navigator>
   )
 }
