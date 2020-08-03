@@ -5,6 +5,7 @@ import FilePickerManager from 'react-native-file-picker';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import { utils } from '@react-native-firebase/app';
+import ImagePicker from 'react-native-image-picker';
 
 
 

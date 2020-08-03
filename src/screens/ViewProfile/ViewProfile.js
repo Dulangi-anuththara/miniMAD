@@ -8,12 +8,21 @@ import {
   } from 'react-native';
 import { UserContext } from '../../../context/UserContext'
 import firestore from '@react-native-firebase/firestore';
-
+import ImagePicker from 'react-native-image-picker';
 export default function ViewProfile({navigation}) {
 
     const user = useContext(UserContext);
     const[url,setURL] = useState('https://bootdey.com/img/Content/avatar/avatar6.png')
     const [data, setData] = useState({name:'',email:'',bio:'',phone:''})
+    const [avataSource, setavataSource] = useState()
+    const options = {
+      title: 'Select Avatar',
+      customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
 
     useEffect(()=>{
       {/*if(user){
@@ -32,10 +41,33 @@ export default function ViewProfile({navigation}) {
       
         
     },[]);
+
+    const ImagePick = () => {ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+     
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+     
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+     
+        setavataSource(source)
+      }
+    });
+  }
     return (
         <View style={styles.container}>
           <View style={styles.header}></View>
-          <Image style={styles.avatar} source={{uri:url}}/>
+          <TouchableOpacity
+          onPress={ImagePick}>
+                <Image style={styles.avatar} source={{uri:url}}/>
+          </TouchableOpacity>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
             <Text style={styles.name}>{user.name}</Text>
