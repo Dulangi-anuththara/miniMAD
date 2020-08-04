@@ -87,10 +87,9 @@ else if(data.role == 1){
         <UserContext.Provider value={data}>
         <Drawer.Navigator initialRouteName="Home">
           <Drawer.Screen name="Home" component={Home} />
-          <Drawer.Screen name="My Announcements" component={MyAnnouncements} />
-          <Drawer.Screen name="Account" component={Profile} />
+          <Drawer.Screen name="My Announcements" component={MyAnnouncements} />         
           <Drawer.Screen name="Subjects" component={SubjectsTech} />
-          <Drawer.Screen name="Assignments" component={Assignments} />
+          <Drawer.Screen name="Account" component={Profile} />
           <Drawer.Screen name="SignOut" component={SignOut} />       
                   
         </Drawer.Navigator>

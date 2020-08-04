@@ -26,7 +26,8 @@ export default function Register(){
       role:1,
       email,
       name,
-      year
+      year,
+      photo:'https://bootdey.com/img/Content/avatar/avatar6.png'
     }
 
     const userRef = firestore().collection('Users');

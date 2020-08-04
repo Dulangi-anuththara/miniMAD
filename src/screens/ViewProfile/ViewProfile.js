@@ -4,16 +4,17 @@ import {
     Text,
     View,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
   } from 'react-native';
 import { UserContext } from '../../../context/UserContext'
-import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-picker';
+import firestore from '@react-native-firebase/firestore';
+import firebase from '@react-native-firebase/app';
 export default function ViewProfile({navigation}) {
 
     const user = useContext(UserContext);
-    const[url,setURL] = useState('https://bootdey.com/img/Content/avatar/avatar6.png')
-    const [data, setData] = useState({name:'',email:'',bio:'',phone:''})
+    const[url,setURL] = useState()
+    const [data, setData] = useState({name:'',email:'',bio:'',phone:'',photo:''})
     const [avataSource, setavataSource] = useState()
     const options = {
       title: 'Select Avatar',
@@ -25,21 +26,15 @@ export default function ViewProfile({navigation}) {
     };
 
     useEffect(()=>{
-      {/*if(user){
-        const key=user[1]
-        console.log(key);
-        const subscriber= firestore()
-                          .collection('Users')
-                          .doc(key)
-                          .onSnapshot(documentSnapshot =>{
-                            if(documentSnapshot.exists){
-                            setData(documentSnapshot.data());
-                          }
-                          })
-                        return subscriber;*/}
-                        console.log(user);
+ 
+      const subscriber =firestore()
+                .collection('Users')
+                .doc(user.id)
+                .onSnapshot((documentquery)=>{
+                  setData(documentquery.data())
+                })
       
-        
+        return subscriber;
     },[]);
 
     const ImagePick = () => {ImagePicker.showImagePicker(options, (response) => {
@@ -53,21 +48,41 @@ export default function ViewProfile({navigation}) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = { uri: response.uri };
-     
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-     
+        const reference = firebase.storage().ref(`Images/${response.fileName}`);
+        const pathToFile = response.path;
+        const task = reference.putFile(pathToFile);
+
+        task.on('state_changed', taskSnapshot => {
+          console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+      });
+
+      task.then(()=>{
+        reference.getDownloadURL().then((url)=>{
+
+          firestore()
+                    .collection('Users')
+                    .doc(user.id)
+                    .update({
+                      photo:url
+                    })
+        })
+      })
+        setURL(response.uri)
         setavataSource(source)
       }
     });
   }
     return (
         <View style={styles.container}>
-          <View style={styles.header}></View>
-          <TouchableOpacity
-          onPress={ImagePick}>
-                <Image style={styles.avatar} source={{uri:url}}/>
-          </TouchableOpacity>
+          <View style={styles.header}>
+
+              
+          <TouchableOpacity style={styles.imgContainer}
+              onPress={ImagePick}>
+                 <Image style={styles.avatar} source={{uri:user.photo}}/>
+              </TouchableOpacity>
+
+          </View>
           <View style={styles.body}>
             <View style={styles.bodyContent}>
             <Text style={styles.name}>{user.name}</Text>
@@ -85,6 +100,9 @@ export default function ViewProfile({navigation}) {
               })}>
                 <Text>Edit Account</Text> 
               </TouchableOpacity>
+
+
+                
             </View>
         </View>
       </View>
@@ -136,7 +154,7 @@ const styles = StyleSheet.create({
       textAlign: 'center'
     },
     buttonContainer: {
-      marginTop:10,
+      marginTop:40,
       height:45,
       flexDirection: 'row',
       justifyContent: 'center',
@@ -145,5 +163,31 @@ const styles = StyleSheet.create({
       width:250,
       borderRadius:30,
       backgroundColor: "#77CBB9",
+    },
+    TouchableOpacityStyle: {
+      position: 'absolute',
+      width: 50,
+      height: 50,
+      alignItems: 'center',
+      justifyContent: 'center',
+      left:300,
+      top:500
+    },
+    FloatingButtonStyle: {
+      resizeMode: 'contain',
+      width: 70,
+      height: 70,
+    },
+    imgContainer: {
+      marginTop:150,
+      height:45,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom:20,
+      flex:1,
+      borderRadius:30,
+      ///borderWidth:3
+
     },
   });
