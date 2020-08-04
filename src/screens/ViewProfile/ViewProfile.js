@@ -37,7 +37,7 @@ export default function ViewProfile({navigation}) {
         return subscriber;
     },[]);
 
-    const ImagePick = () => {ImagePicker.showImagePicker(options, (response) => {
+    const ImagePick = () => {ImagePicker.launchImageLibrary(options, (response) => {
       console.log('Response = ', response);
      
       if (response.didCancel) {

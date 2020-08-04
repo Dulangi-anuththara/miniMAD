@@ -9,8 +9,8 @@ export default function Chat() {
 
     const user = useContext(UserContext);
     const USER = {
-        _id:user[1],
-        name:user[0]
+        _id:user.id,
+        name:user.name,
     }
 
     useEffect(()=>{

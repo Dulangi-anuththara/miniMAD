@@ -35,15 +35,21 @@ export default function Subjects({navigation}) {
     return (
         <View style={styles.container}>
             {subject.map((item) =>{
-               return <Button 
-                            title={item.Name} 
-                            key={item.key}
-                            buttonStyle={{width:350,marginBottom:20,height:70,marginLeft:20,marginRight:20}}
-                            onPress={() =>{navigation.navigate('LectureList',{
-                                key:item.key
-                            })}}
-                            >
-                            </Button>
+               return <Button
+                        title={item.Name}
+                        key={item.key}
+                        buttonStyle={{
+                            backgroundColor:'#0F7173',
+                            width:380,
+                            marginTop:20,
+                            height:70,
+                            marginLeft:20,
+                            marginRight:20,
+                            borderRadius:6
+                        }}
+                        onPress={() =>{navigation.navigate('LectureList',{
+                            key:item.key
+                        })}}></Button>
             })}
         </View>
     )
@@ -51,6 +57,8 @@ export default function Subjects({navigation}) {
 
 const styles = StyleSheet.create({
     container:{
-        marginTop:30
+        marginTop:30,
+        backgroundColor:'#EFF2F1',
+        flex:1
     }
 })

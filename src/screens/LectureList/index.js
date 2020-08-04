@@ -1,3 +1,4 @@
 import LectureList from './LectureList';
+import LectureView from './LectureView'
 
-export default LectureList;
+export {LectureList, LectureView};

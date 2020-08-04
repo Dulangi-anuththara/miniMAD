@@ -23,7 +23,7 @@ export default function Register(){
 
     const data ={
       id:res.user.uid,
-      role:1,
+      role:0,
       email,
       name,
       year,
@@ -117,7 +117,7 @@ export default function Register(){
 const styles = StyleSheet.create({
 
   body: {
-    backgroundColor: '#2A9134',
+    backgroundColor: '#0E9594',
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center'
