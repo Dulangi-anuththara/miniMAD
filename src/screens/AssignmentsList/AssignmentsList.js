@@ -36,18 +36,24 @@ export default function AssignmentsList({navigation}) {
     return (
         <View>
             <FlatList
-      data={assignments}
+             style={styles.notificationList}
+            data={assignments}
       renderItem={({ item }) => (
         <TouchableWithoutFeedback onPress={() => navigation.navigate('ViewAssignments', {
           key:item.key
         })}> 
-        <View style={styles.list}>
+        <View style={styles.notificationBox}>
          <View style={styles.header}> 
+         <Image style={styles.image}
+                          source={{uri:"https://img.icons8.com/fluent/48/000000/folder-invoices.png"}}/>
          <Text style={styles.title}>{item.Title}</Text>
          </View>
+
+         <View style={styles.details}>
           <Text>by {item.DueDate}</Text>
 
             <Text> {item.SubjCode}</Text>
+            </View>
         </View>
         </TouchableWithoutFeedback>
       )}
@@ -62,22 +68,11 @@ const styles = StyleSheet.create({
   Container:{
     backgroundColor:'white',
     flex:1
-},
-
-    list:{
-        borderWidth:3,
-        borderRadius:6,
-        borderColor:'#3096EE',
-        height: 100,
-        flex: 1,
-        backgroundColor:'white',
-        margin:10,
-        //alignItems: 'center',
-        //justifyContent: 'center'
-    },
+  },
     title:{
-        color:'red',
-        fontSize:18
+      color:'white',
+      fontWeight: "bold",
+      fontSize:18
     },
     floatingButton:{
         marginTop:400
@@ -99,7 +94,36 @@ const styles = StyleSheet.create({
     //backgroundColor:'black'
   },
   header:{
-    backgroundColor:'#B1D6F5',
-    height:40
-},
+    backgroundColor:'#0F7173',
+        marginRight:20,
+        borderRadius:10,
+        padding:10,
+        flexDirection:'row'
+  },
+  notificationList:{
+    marginTop:20,
+    padding:5,
+  },
+  notificationBox: {
+    paddingVertical:10,
+    paddingLeft:20,
+    paddingRight:0,
+    marginTop:5,
+    marginBottom:5,
+    marginHorizontal:5,
+    backgroundColor: '#C9FFE2',
+    //flexDirection: 'row',
+    borderWidth:2,
+    borderColor:'#0F7173',
+    borderRadius:10,
+    },
+    details:{
+      flexDirection:'row',
+      padding:10
+    },
+    image:{
+      width:25,
+      height:25,
+      marginRight:5
+    },
 })

@@ -1,21 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Linking, StyleSheet, Modal, TouchableHighlight } from 'react-native'
+import { View, Linking, StyleSheet, Modal, TouchableHighlight,Image } from 'react-native'
 import { Text, Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
 import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
 import firebase from '@react-native-firebase/app'
 import firestore from '@react-native-firebase/firestore';
-import { UserContext } from '../../../context/UserContext'
+import { UserContext } from '../../../context/UserContext';
+import moment from "moment";
 
 export default function ViewAssignments({route, navigation}) {
     
     const {key} = route.params;
+    const [fileName, setFileName] = useState('')
     const[item,setItem] = useState([])
     const [file,setFile] = useState();
     const [progress,setProgress]=useState('');
+    const a = moment()
     const [buttonStat,setButtonStat] = useState('add');
     const [Submission,setSubmission] = useState({state:'No attempts', file:'',gradeState:'Not Graded'});
+    const [time, setTime] = useState(new Date().toUTCString());
     var showButton = <Button></Button>
     const user = useContext(UserContext);
 
@@ -30,26 +34,31 @@ export default function ViewAssignments({route, navigation}) {
 
             if (documentSnapshot.exists) {
             setItem(documentSnapshot.data());
-            //console.log('User data: ', documentSnapshot.data());
+            const time = moment(documentSnapshot.data().DueDate);
+            const dateDiff = time.diff(a, 'days');
+           setTime(dateDiff.toString())
             }
-        });
-       
-       firestore()
-        .collection('Assignments')
-        .doc(key)
-        .collection('Submissions')
-        .doc(user[1])
-        .get()
-        .then(documentSnapshot => {
-            console.log('User exists: ', documentSnapshot.exists);
+        })
+        .then(()=>{
 
-            if (documentSnapshot.exists) {
-            setSubmission(documentSnapshot.data());
-            setButtonStat('edit');
-           // console.log('Submission data: ', documentSnapshot.data());
-            }
-        });
-    },[])
+            const subscriber = firestore()
+                        .collection('Assignments')
+                        .doc(key)
+                        .collection('Submissions')
+                        .doc(user.id)
+                        .onSnapshot(documentSnapshot =>{
+                            if(documentSnapshot.exists){
+                                setSubmission(documentSnapshot.data())
+                                setButtonStat('edit');
+                                setFileName(documentSnapshot.data().file)
+                            }
+                        })
+            console.log("kai");
+            return () => subscriber;
+        })
+    
+        
+    },[]);
 
     const FileUpload = () => {
         FilePickerManager.showFilePicker(null, (response) => {
@@ -64,6 +73,7 @@ export default function ViewAssignments({route, navigation}) {
         else {
           setFile(response);
           setButtonStat('upload');
+          setFileName(response.fileName)
       
         }
       });
@@ -91,7 +101,7 @@ export default function ViewAssignments({route, navigation}) {
                                 .collection('Assignments')
                                 .doc(key)
                                 .collection('Submissions')
-                                .doc(user[1])
+                                .doc(user.id)
                                 .set({
                                     state:'Assignment submitted',
                                     file:file.fileName,
@@ -112,7 +122,7 @@ export default function ViewAssignments({route, navigation}) {
                         .collection('Assignments')
                         .doc(key)
                         .collection('Submissions')
-                        .doc(user[1])
+                        .doc(user.id)
                         .update({
                             state:'Assignment submitted',
                             file:file.fileName,
@@ -152,22 +162,54 @@ export default function ViewAssignments({route, navigation}) {
     switch(buttonStat){
         case 'add':
             showButton =  <Button
+            buttonStyle={{
+                height:45,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom:20,
+                width:200,
+                borderRadius:30,
+                backgroundColor: "#77CBB9",}}
             title="Add Submission"
             onPress={FileUpload}/>
             break;
         case 'upload':
             showButton =  <Button
+            buttonStyle={{
+                height:45,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom:20,
+                width:200,
+                borderRadius:30,
+                backgroundColor: "#5AB1BB",}}
             title="Upload"
             onPress={handleSubmit}/>
             break;
         case 'edit':
             showButton =  <Button
+            buttonStyle={{
+                height:45,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom:20,
+                width:200,
+                borderRadius:30,
+                backgroundColor: "#93B1A7",}}
             title="Edit Submission"
             onPress={FileUpload}/>
             break;
 
         case 'update':
             showButton =  <Button
+            buttonStyle={{
+                height:45,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom:20,
+                width:200,
+                borderRadius:30,
+                backgroundColor: "#77CBB9",}}
             title="Update Submission"
             onPress={handleSubmit}/>
             break;
@@ -180,26 +222,43 @@ export default function ViewAssignments({route, navigation}) {
 
     return (
         <View style={styles.Container}>
-            <View >
+            <View style={styles.header}>
                 <Text h4 >{item.Title}</Text>
             </View>
 
-            <View style={styles.headerContent}>
+            <View style={styles.statusContent}>
                 <Text>{item.Description}</Text>
-                <Text style={{color: 'blue'}}
+
+                <View style={{
+                    flexDirection:'row'}}>
+                <Image style={styles.image}
+                  source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
+                <Text style={styles.info}
                   onPress={() => Linking.openURL(item.Assignment)}>{item.Title}
                   </Text>
+                  </View>
             </View>
-            <Text h4>Submission Status</Text>
+            <View style={styles.header}>
+            <Text h4>Submission Status</Text></View>
             <View style={styles.statusContent}>
 
                     <Text>Submission Status : {Submission.state}</Text>
                     <Text>Grading Status :  {Submission.gradeState}</Text>
                     <Text>Due Date : {item.DueDate}</Text>
-                    <Text>Time Remaining :</Text>
-                    <Text>Submission Comments :</Text>
+                    <Text>Time Remaining : {time} days</Text>
 
-                    <Text>{Submission.file}</Text>
+                    <View style={{
+                        flexDirection:'row'
+                    }}>
+                {fileName !='' && 
+                <Image style={styles.image}
+                source={{uri:"https://img.icons8.com/office/80/000000/pdf.png"}}/>
+                
+                }                
+                    <Text style={styles.info}>{fileName}</Text>
+                        
+                        </View>
+                    
             </View>
 
             <View>
@@ -215,9 +274,14 @@ export default function ViewAssignments({route, navigation}) {
 
 const styles = StyleSheet.create({
     Container:{
-        backgroundColor:'white',
+        backgroundColor:'#EFF2F1',
         flex:1
     },
+    header:{
+        padding:20,
+        alignItems: 'center',
+        backgroundColor: "#77CBB9",
+      },
     headerContent:{
         borderWidth:1,
         borderColor:'#3096EE',
@@ -225,10 +289,13 @@ const styles = StyleSheet.create({
         margin:20
     },
     statusContent:{
-        borderWidth:1,
-        borderColor:'#3096EE',
-        padding:20,
-        margin:20
+        paddingVertical:20,
+        paddingLeft:20,
+        marginTop:15,
+        marginBottom:15,
+        marginHorizontal:10,
+        backgroundColor: '#FFFFFF',
+        borderRadius:10,
 
     },
     submitButton:{
@@ -268,4 +335,16 @@ const styles = StyleSheet.create({
         marginLeft:10,
         marginBottom:20
       },
+      info:{
+        fontSize:16,
+        color: "#00BFFF",
+        marginTop:10,
+        textAlign:'center'
+      },
+      image:{
+        marginTop:10,
+        width:20,
+        height:20,
+        marginRight:10
+    },
 })

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { UserContext } from '../../../context/UserContext'
 
 import firestore from '@react-native-firebase/firestore';
 const image = require('../../../img/plus.png')
@@ -8,6 +9,7 @@ export default function Announcement({navigation}) {
 
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
+  const user = useContext(UserContext);
 
   useEffect(() => {
 
@@ -59,20 +61,24 @@ export default function Announcement({navigation}) {
               </View>
             )}
     />
+      {user.role == 1 && 
+      
+      <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.TouchableOpacityStyle}
+      onPress={() => navigation.navigate('NewAnnouncement')}
+      >
+              <Image
+         source={require('../../../img/plus.png')}
+        //You can use you project image Example below
+        //source={require('./images/float-add-icon.png')}
+        style={styles.FloatingButtonStyle}
+      />
 
-<TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.TouchableOpacityStyle}
-          onPress={() => navigation.navigate('NewAnnouncement')}
-          >
-                  <Image
-             source={require('../../../img/plus.png')}
-            //You can use you project image Example below
-            //source={require('./images/float-add-icon.png')}
-            style={styles.FloatingButtonStyle}
-          />
- 
-        </TouchableOpacity>
+    </TouchableOpacity>
+      
+      }
+
 
 
     </View>

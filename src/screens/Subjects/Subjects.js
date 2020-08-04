@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../../../context/UserContext'
@@ -36,6 +36,7 @@ export default function Subjects({navigation}) {
         <View style={styles.container}>
             {subject.map((item) =>{
                return <Button
+                        icon={<Image source={{uri:"https://img.icons8.com/fluent/48/000000/folder-invoices.png"}}/>}
                         title={item.Name}
                         key={item.key}
                         buttonStyle={{
