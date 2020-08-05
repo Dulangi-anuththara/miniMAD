@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useEffect} from 'react';
-
+import {  Text} from 'react-native';
 
 import {
   Header,
@@ -22,23 +22,38 @@ import {
   Login, 
   Register, 
   Home, 
-  SignOut, 
   Assignments, 
   Chat, 
   Lectures,
   Profile,
+  ChatNav,
 SubjectsTech,
 MyAnnouncements} from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
-import { UserContext } from './context/UserContext'
+import { UserContext } from './context/UserContext';
+import { DrawerActions } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
 const App= () => {
+
+  console.ignoredYellowBox = true;
+  const jumpToAction = DrawerActions.jumpTo('Home');
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [data,setData] = useState({name:'kk'});
+
+  function SignOut({navigation}){
+    auth()
+          .signOut()
+          .then(()=>{
+            console.log("User Signed Out");
+            navigation.dispatch(jumpToAction);
+          })
+
+      return <Text>Bye</Text>
+  }
 
   function onAuthStateChanged(user) {
     setUser(user);
@@ -67,16 +82,15 @@ const App= () => {
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
 
-
+console.log(user);
 
   if (!user) {
+    console.log("User is not here");
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="SignOut" component={SignOut} />
-
+          <Stack.Screen name="Login" component={Login} options={{title:''}} />
+          <Stack.Screen name="Register" component={Register} options={{title:''}}/>
       </Stack.Navigator>
       </NavigationContainer>
     );
@@ -90,7 +104,7 @@ else if(data.role == 1){
           <Drawer.Screen name="My Announcements" component={MyAnnouncements} />         
           <Drawer.Screen name="Subjects" component={SubjectsTech} />
           <Drawer.Screen name="Account" component={Profile} />
-          <Drawer.Screen name="SignOut" component={SignOut} />       
+          <Drawer.Screen name="SignOut" component={SignOut} options={{title:'Sign Out'}} />       
                   
         </Drawer.Navigator>
         </UserContext.Provider>
@@ -108,7 +122,7 @@ else{
         <Drawer.Screen name="Home" component={Home} />
         <Drawer.Screen name="Account" component={Profile} />
         <Drawer.Screen name="Subjects" component={Lectures} />
-        <Drawer.Screen name="Chat" component={Chat} />
+        <Drawer.Screen name="NewChat" component={ChatNav} options={{title:'Chat'}} />
         <Drawer.Screen name="Assignments" component={Assignments} />
         <Drawer.Screen name="SignOut" component={SignOut} />       
                 

@@ -7,7 +7,7 @@ export default function AssignmentsList({navigation}) {
     
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [assignments, setAssignments] = useState([]); // Initial empty array of assignments
-
+  console.ignoredYellowBox = true;
   useEffect(() => {
 
     const subscriber = firestore()

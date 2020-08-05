@@ -10,7 +10,8 @@ import { UserContext } from '../../../context/UserContext';
 import moment from "moment";
 
 export default function ViewAssignments({route, navigation}) {
-    
+
+    console.ignoredYellowBox = true;    
     const {key} = route.params;
     const [fileName, setFileName] = useState('')
     const[item,setItem] = useState([])

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Linking, StyleSheet, Modal, TouchableHighlight, Image } from 'react-native'
+import { View, Linking, StyleSheet, Modal, TouchableHighlight, Image, TouchableOpacity } from 'react-native'
 import { Text, Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
 import { utils } from '@react-native-firebase/app';
@@ -216,6 +216,12 @@ export default function ViewAssignments({route, navigation}) {
             </View>
             
             </View>
+
+            <TouchableOpacity
+                    onPress={()=>{navigation.goBack()}}>
+            <Image style={styles.FloatingButtonStyle} 
+                   source={{uri:"https://img.icons8.com/nolan/128/circled-chevron-left.png"}}/>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -307,5 +313,12 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'center',
         marginTop:20
-    }
+    },
+    FloatingButtonStyle: {
+        resizeMode: 'contain',
+        width: 70,
+        height: 70,
+        marginLeft:20,
+        marginTop:150
+      },
 })

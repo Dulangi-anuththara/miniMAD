@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpacity, StatusBar} from 'react-native';
+import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpacity, Alert} from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 
@@ -10,6 +10,11 @@ export default function Login({navigation}){
 
 
     signIn = () =>{
+      if(email.length == 0 || password.length == 0){
+        Alert.alert('Alert', 'Email or password field is empty. Please fill all the fields');
+         
+        return;
+      }
       
       auth()
       .signInWithEmailAndPassword(email,password)
@@ -17,6 +22,8 @@ export default function Login({navigation}){
         console.log('Logged In successfully');
       })
       .catch(error => {
+
+        Alert.alert('Alert', `${error}`);
         console.error(error);
       });
     }
@@ -24,6 +31,8 @@ export default function Login({navigation}){
     return (
       
         <View style={styles.body}>
+          <Text style={styles.sectionTitle}>17000483</Text>
+          <Text style={styles.sectionTitle}>P.G.G.D.A.Gamage</Text>
          <View style={styles.headerSection}>
          <Text style={styles.sectionTitle}>Sign In</Text>
         </View> 
@@ -40,7 +49,7 @@ export default function Login({navigation}){
                    placeholder={'Password'}
                    keyboardType='visible-password'
                    placeholderTextColor = {'white'}
-                   secureTextEntry={true}
+                   secureTextEntry
                    onChangeText={(val)=> setPassword(val)}
         
         />

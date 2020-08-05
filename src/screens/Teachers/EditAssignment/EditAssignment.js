@@ -237,6 +237,11 @@ export default function EditAssignment({route,navigation}) {
         
 
 <View style={styles.buttonArea}>
+            <TouchableOpacity
+                    onPress={()=>{navigation.goBack()}}>
+                    <Image style={styles.FloatingButtonStyle} 
+                            source={{uri:"https://img.icons8.com/nolan/128/circled-chevron-left.png"}}/>
+            </TouchableOpacity>
                
                <Button
                    title="Update"
@@ -335,5 +340,12 @@ const styles = StyleSheet.create({
         backgroundColor:'#BA1B1D',
         width:100,
         borderRadius:7
+    },
+    FloatingButtonStyle: {
+      resizeMode: 'contain',
+      width: 70,
+      height: 70,
+      marginRight:50,
+
     },
 })

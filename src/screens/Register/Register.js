@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpacity, StatusBar} from 'react-native';
+import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpacity, StatusBar, Alert} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 
-export default function Register(){
+export default function Register({navigation}){
 
   
   const [email, setEmail] = useState('');
@@ -14,6 +14,17 @@ export default function Register(){
   const [name, setName] = useState('');
   
   signUp = () =>{
+    if(email.length == 0 || password.length == 0 || year.length== 0 || name.length == 0){
+      Alert.alert('Alert', 'All fields are required. Please fill all the fields');
+       
+      return;
+    }
+    if (password.trim().length < 8) {
+      Alert.alert('Alert', 'Password must be minimum 8 characters');
+      return;
+  }
+
+
     auth()
   .createUserWithEmailAndPassword(email, password)
   .then((res) => {
@@ -23,10 +34,13 @@ export default function Register(){
 
     const data ={
       id:res.user.uid,
+      status:'Student',
       role:0,
       email,
       name,
       year,
+      bio:'',
+      phone:"(011)-1234567",
       photo:'https://bootdey.com/img/Content/avatar/avatar6.png'
     }
 
@@ -77,6 +91,7 @@ export default function Register(){
       />
       <TextInput style={styles.inputBox}                
                  placeholder={'Email'}
+                 keyboardType='email-address'
                  placeholderTextColor = {'white'}
                  onChangeText={(val)=> setEmail(val)}
       
