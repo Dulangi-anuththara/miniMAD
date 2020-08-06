@@ -21,11 +21,6 @@ export default function NewAssignment({route,navigation}) {
     const [fileName, setFileName] = useState('Choose a File')
     const [progress, setProgress] = useState('')
 
-
-    useEffect(()=>{
-      return
-    },[])
-
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios');

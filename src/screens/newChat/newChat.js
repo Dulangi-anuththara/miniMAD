@@ -8,6 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 
 export default function newChat({navigation}) {
 
+    console.ignoredYellowBox = true;
     const [roomName, setRoomName] = useState('');
 
     const handleButtonPress = () => {

@@ -27,11 +27,12 @@ export default function AssignmentList({navigation}) {
 
     return (
                 <View style={styles.container}>
-                <View>
+                <View>{ assignments.length !=0 &&
                 <FlatList
         style={styles.notificationList}
         data={assignments}
         renderItem={({ item }) => (
+            
             <View style={styles.notificationBox}>
                 <Image style={styles.image}
                         source={{uri:"https://img.icons8.com/office/80/000000/archive.png"}}/>
@@ -47,7 +48,7 @@ export default function AssignmentList({navigation}) {
             </View>
         )}
         
-        />
+        />}
 
 
 
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         left:300,
-        top:500
+        top:400
       },
       FloatingButtonStyle: {
         resizeMode: 'contain',

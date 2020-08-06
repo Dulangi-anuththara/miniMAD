@@ -30,10 +30,6 @@ export default function SubjectsTech({navigation}) {
        });
        return () => Subscriber
     },[])
-
-    const testFun = () =>{
-        console.log(subject);
-    }
     return (
         <View style={styles.container}>
             {subject.map((item) =>{

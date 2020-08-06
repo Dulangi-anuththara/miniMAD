@@ -131,13 +131,13 @@ const styles = StyleSheet.create({
     },
     
   TouchableOpacityStyle: {
-    position: 'absolute',
     width: 50,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
     left:300,
-    top:500
+    top:400,
+    position:'absolute'
   },
   FloatingButtonStyle: {
     resizeMode: 'contain',

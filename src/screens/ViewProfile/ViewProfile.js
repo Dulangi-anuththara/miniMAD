@@ -34,7 +34,7 @@ export default function ViewProfile({navigation}) {
                   setData(documentquery.data())
                 })
       
-        return subscriber;
+        return () => subscriber;
     },[]);
 
     const ImagePick = () => {ImagePicker.launchImageLibrary(options, (response) => {
@@ -86,6 +86,7 @@ export default function ViewProfile({navigation}) {
           <View style={styles.body}>
             <View style={styles.bodyContent}>
             <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.description}>{user.status}</Text>
             <Text style={styles.info}>{user.email}</Text>
             <Text style={styles.description}>{user.bio}</Text>
             <Text style={styles.description}>{user.phone}</Text>

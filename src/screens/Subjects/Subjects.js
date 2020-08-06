@@ -41,7 +41,7 @@ export default function Subjects({navigation}) {
                         key={item.key}
                         buttonStyle={{
                             backgroundColor:'#0F7173',
-                            width:380,
+                            width:370,
                             marginTop:20,
                             height:70,
                             marginLeft:20,

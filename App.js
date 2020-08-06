@@ -89,7 +89,9 @@ console.log(user);
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={Login} options={{title:''}} />
+          <Stack.Screen name="Login" component={Login} options={{title:'17000483 - P.G.G.D.A.Gamage',
+          headerTitleAlign:'center',
+          headerTintColor:'black'}} />
           <Stack.Screen name="Register" component={Register} options={{title:''}}/>
       </Stack.Navigator>
       </NavigationContainer>

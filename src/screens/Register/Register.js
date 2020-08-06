@@ -99,6 +99,7 @@ export default function Register({navigation}){
       <TextInput style={styles.inputBox}
                  placeholder={'Password'}
                  placeholderTextColor = {'white'}
+                 secureTextEntry
                  onChangeText={(val) => setPassword(val)}
       
       />
@@ -132,13 +133,13 @@ export default function Register({navigation}){
 const styles = StyleSheet.create({
 
   body: {
-    backgroundColor: '#0E9594',
+    backgroundColor: '#0F7173',
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center'
   },
   headerSection :{
-      marginTop: 60,
+      marginTop: 20,
       marginBottom:20,
       fontSize:5
   },
@@ -149,7 +150,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   inputBox: {
-    //backgroundcolor:'white',
     height: 60,
     width: 300,
     borderColor: 'white',
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     margin: 20,
     fontSize:18,
     paddingLeft:15,
+    color:'white'
   },
   submitButton: {
     backgroundColor: 'white',

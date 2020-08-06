@@ -8,10 +8,6 @@ export default function Player({route,navigation}) {
 
   const {url,title} = route.params
 
-  useEffect(()=>{
-    console.log(url);
-  })
-
     return (
       <View>
         <Text>{title}</Text>

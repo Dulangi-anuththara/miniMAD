@@ -9,6 +9,7 @@ export default function RoomScreen({route}) {
 
     const { thread } = route.params;
     const currentUser= auth().currentUser;
+    console.ignoredYellowBox = true;
 
     const [messages, setMessages] = useState([
         /**

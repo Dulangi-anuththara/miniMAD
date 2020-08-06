@@ -29,6 +29,7 @@ export default function LectureList({navigation}) {
     return (
         <View style={styles.container}>
             <View>
+                { lectures.length > 0 &&
             <FlatList
     style={styles.notificationList}
       data={lectures}
@@ -44,7 +45,7 @@ export default function LectureList({navigation}) {
                         LecCode:item.key,
                         item:item,
                         fileName:item.Name,
-                        Description:item.Description
+                        Description:item.description
                     })
                 }}>{item.Title}</Text>
         </View>
@@ -52,7 +53,7 @@ export default function LectureList({navigation}) {
       
     />
 
-
+}
 
 
             </View>
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         left:300,
-        top:500
+        top:400
       },
       FloatingButtonStyle: {
         resizeMode: 'contain',

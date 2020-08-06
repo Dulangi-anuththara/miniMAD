@@ -7,6 +7,7 @@ export default function ChatList({navigation}) {
 
     const [threads, setThreads] = useState([]);
     const [loading, setLoading] = useState(true); 
+    console.ignoredYellowBox = true;
 
     useEffect(() => {
         const unsubscribe = firestore()

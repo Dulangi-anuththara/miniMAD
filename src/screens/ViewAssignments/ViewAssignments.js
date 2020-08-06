@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, Suspense } from "react";
 import { View, Linking, StyleSheet, Modal, TouchableHighlight,Image } from 'react-native'
 import { Text, Button } from 'react-native-elements';
 import FilePickerManager from 'react-native-file-picker';
@@ -25,7 +25,7 @@ export default function ViewAssignments({route, navigation}) {
     const user = useContext(UserContext);
 
     useEffect(() => {
-        console.log(key)
+
         firestore()
         .collection('Assignments')
         .doc(key)
@@ -58,7 +58,6 @@ export default function ViewAssignments({route, navigation}) {
             return () => subscriber;
         })
     
-        
     },[]);
 
     const FileUpload = () => {

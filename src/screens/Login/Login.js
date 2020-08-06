@@ -3,10 +3,13 @@ import { SafeAreaView,StyleSheet,ScrollView, View, Text,TextInput, TouchableOpac
 import auth from '@react-native-firebase/auth';
 
 
+
 export default function Login({navigation}){
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [bgcolor, setColor] = useState('#0F7173');
+    const [role, setRole] = useState('teacher')
 
 
     signIn = () =>{
@@ -27,12 +30,26 @@ export default function Login({navigation}){
         console.error(error);
       });
     }
+
+    const changeRole = () =>{
+      if(role == 'teacher'){
+        setColor('#95C623');
+        setRole('student');
+
+      }else{
+        setColor('#0F7173');
+        setRole('teacher');
+      }
+    }
   
     return (
       
-        <View style={styles.body}>
-          <Text style={styles.sectionTitle}>17000483</Text>
-          <Text style={styles.sectionTitle}>P.G.G.D.A.Gamage</Text>
+        <View style={{
+          backgroundColor:`${bgcolor}`,
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'center'
+        }}>
          <View style={styles.headerSection}>
          <Text style={styles.sectionTitle}>Sign In</Text>
         </View> 
@@ -47,7 +64,6 @@ export default function Login({navigation}){
         />
         <TextInput style={styles.inputBox}
                    placeholder={'Password'}
-                   keyboardType='visible-password'
                    placeholderTextColor = {'white'}
                    secureTextEntry
                    onChangeText={(val)=> setPassword(val)}
@@ -63,9 +79,14 @@ export default function Login({navigation}){
 
         <TouchableOpacity
                  style = {styles.submitButton}
+                 onPress={changeRole}
+                >
+                 <Text style = {styles.submitButtonText}> Sign in as {role} </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                  onPress={() => navigation.navigate('Register')}
                 >
-                 <Text style = {styles.submitButtonText}> Sign Up </Text>
+                 <Text style = {styles.ButtonText}> Create an account </Text>
               </TouchableOpacity>
       </View>
         </View>
@@ -75,14 +96,14 @@ export default function Login({navigation}){
   
   const styles = StyleSheet.create({
   
-    body: {
-      backgroundColor: '#0E9594',
+   /* body: {
+      backgroundColor:'#0F7173',
       flex: 1,
       justifyContent: 'flex-start',
       alignItems: 'center'
-    },
+    },*/
     headerSection :{
-        marginTop: 60,
+        marginTop: 50,
         marginBottom:20,
         fontSize:5
     },
@@ -102,6 +123,7 @@ export default function Login({navigation}){
       margin: 20,
       fontSize:18,
       paddingLeft:15,
+      color:'white'
     },
     submitButton: {
       backgroundColor: 'white',
@@ -115,6 +137,13 @@ export default function Login({navigation}){
       fontWeight: 'bold',
       textAlign:'center',
       fontSize: 18,
+    },
+    ButtonText:{
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign:'center',
+      fontSize: 18,
+      textDecorationLine:'underline'
     },
    
   });

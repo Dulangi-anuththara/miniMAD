@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
         marginHorizontal:20,
         flexDirection: 'row',
         alignItems:'center',
+        textAlignVertical:'top',
     
         shadowColor: "#808080",
         shadowOffset: {

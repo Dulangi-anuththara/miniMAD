@@ -85,8 +85,9 @@ const styles = StyleSheet.create({
     padding:30,
   },
   postTitle:{
-    fontSize:22,
-    fontWeight:'600',
+    fontSize:18,
+    fontWeight:'100',
+    textAlign:'justify'
   },
   postDescription:{
     fontSize:16,

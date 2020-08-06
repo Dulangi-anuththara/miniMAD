@@ -11,7 +11,7 @@ export default function MyAnnouncements({navigation}) {
   const userId= auth().currentUser.uid;
 
   useEffect(() => {
-
+    console.log(userId);
     const subscriber = firestore()
       .collection('Announcements')
       .where('UserId','==',userId)
