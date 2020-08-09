@@ -213,7 +213,25 @@ export default function ViewAssignments({route, navigation}) {
                 key:key,
                 id:id
             })}/>
+            
             </View>
+
+            <View style={styles.submitButton}>
+            <Button
+            title="Submissions"
+            buttonStyle={{
+                backgroundColor:'#564256',
+                width:200
+            }}
+            onPress={()=> navigation.navigate('Submissions',{
+                item:item,
+                SubjCode:SubjCode,
+                key:key,
+                id:id
+            })}/>
+            
+            </View>
+
             
             </View>
 
@@ -319,6 +337,6 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         marginLeft:20,
-        marginTop:150
+        marginTop:80
       },
 })
